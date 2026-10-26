@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — D.PEDRO SOLUÇÕES</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/png" href="assets/1.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .login-box {
+            max-width:400px; margin:4rem auto; background:var(--card);
+            padding:3rem 2.5rem; border-radius:var(--radius);
+            box-shadow:var(--shadow-lg); text-align:center;
+        }
+        .login-box h1 { margin-bottom:1.5rem; color:var(--text); }
+        .login-box input {
+            width:100%; padding:0.9rem; border:2px solid var(--border);
+            border-radius:0.8rem; font-size:1rem; margin-bottom:1rem;
+            background:var(--bg); color:var(--text); font-family:inherit;
+        }
+        .login-box input:focus { outline:none; border-color:var(--primary); }
+        .filter-bar { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1rem; }
+        .filter-btn {
+            padding:.5rem 1rem; border:2px solid var(--border);
+            background:var(--card); color:var(--text); border-radius:30px;
+            cursor:pointer; font-weight:600; font-size:.85rem; transition:.2s;
+        }
+        .filter-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div><span><i class="fas fa-lock"></i> Área Administrativa</span></div>
+    <div>
+        <a href="index.html"><i class="fas fa-home"></i> Site</a>
+        <a onclick="ADMIN.logout()" style="cursor:pointer"><i class="fas fa-sign-out-alt"></i> Sair</a>
+    </div>
+</div>
+
+<nav>
+    <a href="index.html" class="logo">
+        <div class="logo-mark">DP</div>
+        <div class="logo-text">D.PEDRO SOLUÇÕES <small>ADMIN</small></div>
+    </a>
+</nav>
+
+<!-- LOGIN -->
+<div id="loginScreen" style="padding:2rem;">
+    <div class="login-box">
+        <i class="fas fa-lock" style="font-size:3rem;color:var(--primary);margin-bottom:1rem;"></i>
+        <h1>Área Restrita</h1>
+        <p style="color:var(--text-muted);margin-bottom:1.5rem;font-size:.9rem;">Introduza a senha</p>
+        <input type="password" id="adminPassword" placeholder="Senha" onkeypress="if(event.key==='Enter')doLogin()">
+        <button class="btn btn-primary btn-block" onclick="doLogin()"><i class="fas fa-sign-in-alt"></i> Entrar</button>
+        <div id="loginError" style="color:var(--danger);font-size:.85rem;margin-top:.8rem;"></div>
+    </div>
+</div>
+
+<!-- PAINEL -->
+<div id="adminPanel" style="display:none;padding:2rem 5%;">
+    <div class="admin-tabs">
+        <button class="admin-tab active" onclick="ADMIN.switchTab('products',this)"><i class="fas fa-box"></i> Produtos</button>
+        <button class="admin-tab" onclick="ADMIN.switchTab('orders',this)"><i class="fas fa-receipt"></i> Pedidos</button>
+        <button class="admin-tab" onclick="ADMIN.switchTab('erp',this)"><i class="fas fa-plug"></i> ERP & API</button>
+        <button class="admin-tab" onclick="ADMIN.switchTab('tools',this)"><i class="fas fa-tools"></i> Ferramentas</button>
+    </div>
+
+    <!-- TAB PRODUTOS -->
+    <div id="tabProducts" class="admin-content">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+            <h2><i class="fas fa-box"></i> Produtos (100)</h2>
+            <button class="btn btn-success" onclick="ADMIN.openForm()"><i class="fas fa-plus"></i> Novo Produto</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box"><div class="label">Total</div><div class="value blue" id="statTotal">0</div></div>
+            <div class="stat-box"><div class="label">Publicados</div><div class="value green" id="statPublicado">0</div></div>
+            <div class="stat-box"><div class="label">Rascunhos</div><div class="value" id="statRascunho">0</div></div>
+            <div class="stat-box"><div class="label">Partilhados</div><div class="value" id="statPartilhado">0</div></div>
+            <div class="stat-box"><div class="label">Esgotados</div><div class="value orange" id="statOut">0</div></div>
+        </div>
+
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all" onclick="ADMIN.setFilter('all')">Todos</button>
+            <button class="filter-btn" data-filter="publicado" onclick="ADMIN.setFilter('publicado')">Publicados</button>
+            <button class="filter-btn" data-filter="rascunho" onclick="ADMIN.setFilter('rascunho')">Rascunhos</button>
+            <button class="filter-btn" data-filter="partilhado" onclick="ADMIN.setFilter('partilhado')">Partilhados</button>
+            <input type="text" placeholder="🔍 Procurar..." oninput="ADMIN.setSearch(this.value)"
+                style="flex:1;min-width:180px;padding:.5rem 1rem;border:2px solid var(--border);border-radius:30px;background:var(--card);color:var(--text);font-family:inherit;">
+        </div>
+
+        <div style="overflow-x:auto;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Img</th><th>Nome</th><th>Categoria</th><th>Preço</th>
+                        <th>Stock</th><th>Estado</th><th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="adminTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TAB PEDIDOS -->
+    <div id="tabOrders" class="admin-content" style="display:none;">
+        <h2><i class="fas fa-receipt"></i> Pedidos</h2>
+        <div id="ordersList" style="margin-top:1rem;"></div>
+    </div>
+
+    <!-- TAB ERP -->
+    <div id="tabErp" class="admin-content" style="display:none;">
+        <h2><i class="fas fa-plug"></i> Integração ERP & API</h2>
+
+        <div style="background:var(--card);padding:1.5rem;border-radius:var(--radius);margin:1rem 0;">
+            <h3 style="margin-bottom:1rem;color:var(--text);">🔗 Configuração da API</h3>
+            <div class="form-group">
+                <label>Base URL</label>
+                <input type="text" id="erpBaseUrl" placeholder="https://api.kanawasoft.ao/v1">
+            </div>
+            <div class="form-group">
+                <label>API Key</label>
+                <input type="text" id="erpApiKey" placeholder="sk_xxxxxxxx">
+            </div>
+            <div class="form-group">
+                <label>Store ID</label>
+                <input type="text" id="erpStoreId" placeholder="DPEDRO-LDA-001">
+            </div>
+            <button class="btn btn-primary" onclick="ADMIN.saveErpConfig()"><i class="fas fa-save"></i> Guardar</button>
+            <button class="btn btn-success" onclick="ADMIN.syncProducts()"><i class="fas fa-sync-alt"></i> Sincronizar Produtos</button>
+        </div>
+
+        <div style="background:var(--card);padding:1.5rem;border-radius:var(--radius);margin:1rem 0;">
+            <h3 style="margin-bottom:1rem;color:var(--text);">🧩 Plugins / Conectores</h3>
+            <div id="erpPlugins"></div>
+        </div>
+
+        <div style="background:var(--card);padding:1.5rem;border-radius:var(--radius);margin:1rem 0;">
+            <h3 style="margin-bottom:1rem;color:var(--text);">📜 Eventos Recentes</h3>
+            <div id="erpLogs"></div>
+        </div>
+    </div>
+
+    <!-- TAB FERRAMENTAS -->
+    <div id="tabTools" class="admin-content" style="display:none;">
+        <h2><i class="fas fa-tools"></i> Ferramentas</h2>
+        <div style="margin-top:1rem;">
+            <div style="padding:1.2rem;background:var(--bg);border-radius:var(--radius);margin-bottom:1rem;">
+                <h4>Backup</h4>
+                <p style="color:var(--text-muted);font-size:.85rem;margin:.5rem 0;">Exportar produtos, pedidos e logs</p>
+                <button class="btn btn-primary" onclick="ADMIN.exportAll()"><i class="fas fa-download"></i> Exportar</button>
+            </div>
+            <div style="padding:1.2rem;background:#fef2f2;border-radius:var(--radius);">
+                <h4 style="color:#991b1b;">Reset</h4>
+                <p style="color:var(--text-muted);font-size:.85rem;margin:.5rem 0;">Apagar todos os dados e restaurar 100 produtos</p>
+                <button class="btn btn-danger" onclick="ADMIN.resetAll()"><i class="fas fa-bomb"></i> Reset Total</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL FORM -->
+<div class="modal" id="formModal">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width:700px;">
+        <div class="modal-header">
+            <h2 id="formTitle"><i class="fas fa-plus"></i> Novo Produto</h2>
+            <button onclick="closeForm()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="formId">
+            <div class="form-group"><label>Nome *</label><input type="text" id="formName"></div>
+            <div class="form-row">
+                <div class="form-group"><label>Categoria</label><select id="formCategory"></select></div>
+                <div class="form-group"><label>Estado</label><select id="formStatus"></select></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Marca</label><input type="text" id="formBrand"></div>
+                <div class="form-group"><label>Garantia</label><input type="text" id="formWarranty"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Preço (Kz) *</label><input type="number" id="formPrice"></div>
+                <div class="form-group"><label>Promo (Kz)</label><input type="number" id="formPromo"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Stock</label><input type="number" id="formStock"></div>
+                <div class="form-group"><label>Imagem (URL)</label><input type="text" id="formImage" placeholder="assets/1.png"></div>
+            </div>
+            <div class="form-group"><label>Especificações</label><input type="text" id="formSpecs"></div>
+            <div class="form-group"><label>Descrição</label><textarea id="formDescription" rows="3"></textarea></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" style="background:var(--bg);color:var(--text);" onclick="closeForm()">Cancelar</button>
+            <button class="btn btn-primary" onclick="saveForm()"><i class="fas fa-save"></i> Guardar</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="assets/js/products.js"></script>
+<script src="assets/js/erp-bridge.js"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>

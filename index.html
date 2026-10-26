@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>D.PEDRO SOLUÇÕES — Tecnologia, Segurança & Energia</title>
+    <meta name="description" content="Loja online + KanawaSoft ERP. Segurança, energia, informática e muito mais em Angola.">
+    <meta name="theme-color" content="#1e3a8a">
+    <meta property="og:title" content="D.PEDRO SOLUÇÕES">
+    <meta property="og:description" content="Tecnologia, Segurança & Energia + KanawaSoft ERP">
+    <meta property="og:image" content="assets/1.png">
+    <link rel="icon" type="image/png" href="assets/1.png">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZPQXHR09R4"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ZPQXHR09R4');</script>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+    <div class="contact-info">
+        <span><i class="fas fa-phone-alt"></i> 946 299 834 | 959 777 301</span>
+        <span><i class="fas fa-map-marker-alt"></i> Viana, Vila Flor</span>
+        <span><i class="fas fa-envelope"></i> dpedroservice@gmail.com</span>
+    </div>
+    <div class="social-links">
+        <a href="https://wa.me/244946299834" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        <a href="mailto:dpedroservice@gmail.com"><i class="fas fa-envelope"></i></a>
+        <a href="https://www.linkedin.com/in/daniel-pedro-bb03872b5/"><i class="fab fa-linkedin"></i></a>
+        <a href="https://www.instagram.com/dpedro_solucoes/"><i class="fab fa-instagram"></i></a>
+        <a onclick="toggleTheme()" style="cursor:pointer" title="Tema"><i class="fas fa-moon"></i></a>
+    </div>
+</div>
+
+<!-- NAV -->
+<nav>
+    <a href="index.html" class="logo">
+        <img src="assets/1.png" alt="DP" onerror="this.style.display='none'">
+        <div class="logo-text">D.PEDRO SOLUÇÕES <small>COMÉRCIO E PRESTAÇÃO DE SERVIÇOS</small></div>
+    </a>
+    <ul class="nav-menu">
+        <li><a href="#" class="nav-link active" data-page="inicio" onclick="navigate('inicio');return false;"><i class="fas fa-home"></i> Início</a></li>
+
+        <li><a href="empresa.html"><i class="fas fa-building"></i> Empresa <span class="arrow"><i class="fas fa-chevron-down"></i></span></a>
+            <div class="mega-menu">
+                <div class="mega-col"><div class="mega-col-title">Institucional</div>
+                    <a href="empresa.html"><i class="fas fa-users"></i> Quem somos</a>
+                    <a href="empresa.html#mercados"><i class="fas fa-chart-pie"></i> Mercados Verticais</a>
+                    <a href="empresa.html#ajuda"><i class="fas fa-question-circle"></i> Sobre e ajuda</a>
+                </div>
+                <div class="mega-col"><div class="mega-col-title">Contactos</div>
+                    <a href="#" onclick="navigate('contactos');return false;"><i class="fas fa-address-book"></i> Contactos</a>
+                    <a href="empresa.html#recrutamento"><i class="fas fa-user-plus"></i> Recrutamento</a>
+                    <a href="empresa.html#indicar"><i class="fas fa-gift"></i> Indique e ganhe</a>
+                </div>
+                <div class="mega-col"><div class="mega-col-title">Recursos</div>
+                    <a href="empresa.html#recursos"><i class="fas fa-box-open"></i> Recursos</a>
+                    <a href="empresa.html#atualizacoes"><i class="fas fa-sync-alt"></i> Atualizações</a>
+                    <a href="empresa.html#manutencao"><i class="fas fa-tools"></i> Manutenção</a>
+                </div>
+                <div class="mega-col destaque">
+                    <h3><i class="fas fa-star"></i> Destaques</h3>
+                    <div class="carrossel-animado">
+                        <img src="assets/2.png" alt="D1" class="img-animada">
+                        <img src="assets/3.png" alt="D2" class="img-animada">
+                        <img src="assets/4.png" alt="D3" class="img-animada">
+                    </div>
+                    <div class="destaque-texto">
+                        <h4>Parceiros D.PEDRO</h4>
+                        <p>Conheça nossos parceiros</p>
+                        <button class="btn-highlight" onclick="location.href='empresa.html'">Ver mais →</button>
+                    </div>
+                </div>
+            </div>
+        </li>
+
+        <li><a href="empresa.html#solucoes"><i class="fas fa-cube"></i> Soluções <span class="arrow"><i class="fas fa-chevron-down"></i></span></a>
+            <div class="mega-menu">
+                <div class="mega-col"><div class="mega-col-title">Segurança</div>
+                    <a href="empresa.html#solucoes"><i class="fas fa-video"></i> Câmaras CFTV</a>
+                    <a href="empresa.html#solucoes"><i class="fas fa-bell"></i> Alarmes</a>
+                    <a href="empresa.html#solucoes"><i class="fas fa-fingerprint"></i> Controlo acesso</a>
+                </div>
+                <div class="mega-col"><div class="mega-col-title">Energia</div>
+                    <a href="empresa.html#solucoes"><i class="fas fa-solar-panel"></i> Sistema Off Grid</a>
+                    <a href="empresa.html#solucoes"><i class="fas fa-bolt"></i> Cerca elétrica</a>
+                </div>
+                <div class="mega-col"><div class="mega-col-title">Tecnologia</div>
+                    <a href="empresa.html#solucoes"><i class="fas fa-hdd"></i> Gravadores</a>
+                    <a href="empresa.html#solucoes"><i class="fas fa-microchip"></i> Hardware</a>
+                </div>
+                <div class="mega-col destaque">
+                    <h3><i class="fas fa-rocket"></i> Novidades</h3>
+                    <div class="carrossel-animado">
+                        <img src="assets/5.png" alt="N1" class="img-animada">
+                        <img src="assets/6.png" alt="N2" class="img-animada">
+                        <img src="assets/7.png" alt="N3" class="img-animada">
+                    </div>
+                    <div class="destaque-texto">
+                        <h4>Soluções Inovadoras</h4>
+                        <p>Tecnologia de ponta</p>
+                        <button class="btn-highlight" onclick="location.href='empresa.html'">Explorar →</button>
+                    </div>
+                </div>
+            </div>
+        </li>
+
+        <li><a href="#" onclick="navigate('loja');return false;"><i class="fas fa-boxes"></i> Produtos <span class="arrow"><i class="fas fa-chevron-down"></i></span></a>
+            <div class="mega-menu">
+                <div class="mega-col"><div class="mega-col-title">Catálogo</div>
+                    <a href="#" onclick="navigate('loja');return false;"><i class="fas fa-book"></i> Catálogo geral</a>
+                    <a href="#" onclick="navigate('loja');return false;"><i class="fas fa-store"></i> Loja Virtual</a>
+                </div>
+                <div class="mega-col"><div class="mega-col-title">Downloads</div>
+                    <a href="#"><i class="fas fa-download"></i> Aplicativos</a>
+                    <a href="#"><i class="fas fa-file-pdf"></i> Manuais</a>
+                </div>
+                <div class="mega-col"><div class="mega-col-title">Modelos</div>
+                    <a href="empresa.html#modelos"><i class="fas fa-clone"></i> Templates</a>
+                    <a href="empresa.html#cardapio"><i class="fas fa-utensils"></i> Cardápio</a>
+                </div>
+                <div class="mega-col destaque">
+                    <h3><i class="fas fa-gift"></i> Promoções</h3>
+                    <div class="carrossel-animado">
+                        <img src="assets/8.png" alt="P1" class="img-animada">
+                        <img src="assets/9.png" alt="P2" class="img-animada">
+                        <img src="assets/10.png" alt="P3" class="img-animada">
+                    </div>
+                    <div class="destaque-texto">
+                        <h4>Produtos em Destaque</h4>
+                        <p>Novidades e promoções</p>
+                        <button class="btn-highlight" onclick="navigate('loja')">Ver ofertas →</button>
+                    </div>
+                </div>
+            </div>
+        </li>
+
+        <li><a href="#"><i class="fas fa-microchip"></i> Tecnologia <span class="arrow"><i class="fas fa-chevron-down"></i></span></a>
+            <div class="mega-menu">
+                <div class="mega-col"><div class="mega-col-title">IA & Integração</div>
+                    <a href="empresa.html#ia"><i class="fas fa-robot"></i> Assistente IA</a>
+                    <a href="admin.html"><i class="fas fa-plug"></i> API / ERP</a>
+                </div>
+                <div class="mega-col"><div class="mega-col-title">Análise</div>
+                    <a href="empresa.html#analise"><i class="fas fa-chart-bar"></i> Análise</a>
+                    <a href="empresa.html#seo"><i class="fas fa-search-plus"></i> SEO</a>
+                </div>
+                <div class="mega-col"><div class="mega-col-title">Comunicação</div>
+                    <a href="empresa.html#dominio"><i class="fas fa-globe"></i> Domínio</a>
+                    <a href="empresa.html#comunicacao"><i class="fas fa-comments"></i> Comunicação</a>
+                </div>
+                <div class="mega-col destaque">
+                    <h3><i class="fas fa-robot"></i> Inteligência Artificial</h3>
+                    <div class="carrossel-animado">
+                        <img src="assets/11.png" alt="IA1" class="img-animada">
+                        <img src="assets/12.png" alt="IA2" class="img-animada">
+                        <img src="assets/13.png" alt="IA3" class="img-animada">
+                    </div>
+                    <div class="destaque-texto">
+                        <h4>Assistente IA</h4>
+                        <p>Responde em segundos</p>
+                        <button class="btn-highlight" onclick="AI.toggle()">Perguntar →</button>
+                    </div>
+                </div>
+            </div>
+        </li>
+
+        <li><a href="empresa.html#cursos"><i class="fas fa-users"></i> Comunidade <span class="arrow"><i class="fas fa-chevron-down"></i></span></a>
+            <div class="mega-menu">
+                <div class="mega-col"><div class="mega-col-title">Cursos</div>
+                    <a href="empresa.html#cursos"><i class="fas fa-graduation-cap"></i> Cursos</a>
+                    <a href="empresa.html#webinars"><i class="fas fa-video"></i> Webinars</a>
+                </div>
+                <div class="mega-col"><div class="mega-col-title">Notificações</div>
+                    <a href="empresa.html#atualizacoes"><i class="fas fa-bell"></i> Notificações</a>
+                    <a href="empresa.html#atualizacoes"><i class="fas fa-sync-alt"></i> Atualizações</a>
+                </div>
+                <div class="mega-col"><div class="mega-col-title">Suporte</div>
+                    <a href="empresa.html#ajuda"><i class="fas fa-question-circle"></i> Central de ajuda</a>
+                    <a href="#" onclick="navigate('contactos');return false;"><i class="fas fa-headset"></i> Suporte técnico</a>
+                </div>
+                <div class="mega-col destaque">
+                    <h3><i class="fas fa-graduation-cap"></i> Aprenda</h3>
+                    <div class="carrossel-animado">
+                        <img src="assets/14.png" alt="C1" class="img-animada">
+                        <img src="assets/15.png" alt="C2" class="img-animada">
+                        <img src="assets/16.png" alt="C3" class="img-animada">
+                    </div>
+                    <div class="destaque-texto">
+                        <h4>Cursos e Treinamentos</h4>
+                        <p>Capacitação técnica</p>
+                        <button class="btn-highlight" onclick="location.href='empresa.html#cursos'">Ver cursos →</button>
+                    </div>
+                </div>
+            </div>
+        </li>
+
+        <li><a href="admin.html"><i class="fas fa-cog"></i> Admin</a></li>
+        <li><a href="#" class="nav-link" data-page="erp" onclick="navigate('erp');return false;"><i class="fas fa-desktop"></i> ERP</a></li>
+        <li><a class="nav-cart" onclick="openCart()" style="cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;padding:.5rem 1rem;border-radius:40px;background:var(--primary);color:#fff;text-decoration:none;">
+            <i class="fas fa-shopping-cart"></i> <span class="cart-count">0</span>
+        </a></li>
+    </ul>
+</nav>
+
+<!-- PÁGINAS SPA -->
+<div id="page-inicio" class="page active">
+    <section style="background:linear-gradient(135deg,#0f172a,#1e3a8a);color:#fff;padding:4rem 5%;position:relative;overflow:hidden;">
+        <div style="position:absolute;inset:0;background:url('assets/1.png') center/cover;opacity:0.15;"></div>
+        <div style="position:relative;z-index:1;max-width:700px;animation:fadeUp .8s;">
+            <div style="background:rgba(255,255,255,.15);padding:.4rem 1.2rem;border-radius:40px;display:inline-block;font-size:.85rem;margin-bottom:1rem;border:1px solid rgba(255,255,255,.2);">
+                🏢 Empresa Angolana · Desde 2021
+            </div>
+            <h1 style="font-size:3rem;font-weight:800;line-height:1.1;margin-bottom:1rem;">
+                Tecnologia, <span style="color:#fbbf24">Segurança</span><br>& Energia
+            </h1>
+            <p style="font-size:1.15rem;opacity:.9;margin-bottom:2rem;">
+                Loja online, serviços técnicos especializados e o sistema de gestão <strong>KanawaSoft ERP</strong>.
+            </p>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+                <button onclick="navigate('loja')" class="btn btn-success btn-lg"><i class="fas fa-shopping-bag"></i> Ver Loja</button>
+                <button onclick="navigate('erp')" class="btn btn-warning btn-lg"><i class="fas fa-desktop"></i> KanawaSoft ERP</button>
+                <button onclick="AI.toggle()" class="btn btn-primary btn-lg"><i class="fas fa-robot"></i> Perguntar à IA</button>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
+    </style>
+
+    <section class="container">
+        <div class="metric-grid">
+            <div class="metric-card"><div class="label">Anos</div><div class="value" data-count="5">0</div></div>
+            <div class="metric-card" style="border-left-color:var(--success)"><div class="label">Clientes</div><div class="value" data-count="200">0</div></div>
+            <div class="metric-card" style="border-left-color:var(--warning)"><div class="label">Produtos</div><div class="value" data-count="100">0</div></div>
+            <div class="metric-card" style="border-left-color:var(--primary-light)"><div class="label">Suporte 24/7</div><div class="value" data-count="24">0</div></div>
+        </div>
+    </section>
+
+    <section class="container">
+        <h2 class="section-title"><i class="fas fa-star"></i> Porquê escolher?</h2>
+        <div class="card-grid">
+            <div class="info-card" style="text-align:center;"><div class="info-card-icon" style="margin:0 auto 1rem;"><i class="fas fa-shield-alt"></i></div><h3>Certificado</h3><p>Marcas Hikvision, Dahua, TP-Link, JA Solar</p></div>
+            <div class="info-card" style="text-align:center;"><div class="info-card-icon" style="margin:0 auto 1rem;"><i class="fas fa-truck-fast"></i></div><h3>Entrega Rápida</h3><p>Luanda em 24-48h</p></div>
+            <div class="info-card" style="text-align:center;"><div class="info-card-icon" style="margin:0 auto 1rem;"><i class="fas fa-handshake"></i></div><h3>Suporte</h3><p>Técnicos certificados</p></div>
+            <div class="info-card" style="text-align:center;"><div class="info-card-icon" style="margin:0 auto 1rem;"><i class="fas fa-credit-card"></i></div><h3>Pagamento</h3><p>Dinheiro, transferência, Multicaixa</p></div>
+        </div>
+    </section>
+
+    <section class="container">
+        <h2 class="section-title"><i class="fas fa-fire"></i> Produtos em Destaque</h2>
+        <div class="products-grid" id="featuredProducts"></div>
+    </section>
+</div>
+
+<div id="page-loja" class="page">
+    <section class="container" style="padding-top:2rem;">
+        <h2 class="section-title"><i class="fas fa-shopping-bag"></i> Loja Online (100 produtos)</h2>
+        <p class="section-subtitle">Produtos com garantia e entrega em Angola.</p>
+        <div class="categories-grid" id="categoriesGrid"></div>
+        <div class="filters">
+            <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Pesquisar produtos..." oninput="filterProducts()"></div>
+            <select class="sort-select" id="sortSelect" onchange="filterProducts()">
+                <option value="default">Ordenar</option>
+                <option value="price-asc">Preço ↑</option>
+                <option value="price-desc">Preço ↓</option>
+                <option value="name">Nome A-Z</option>
+            </select>
+            <button class="btn-ofertas" onclick="toggleOfertas()" id="btnOfertas">🔥 Ofertas</button>
+        </div>
+        <div class="products-grid" id="productsGrid"></div>
+    </section>
+</div>
+
+<div id="page-erp" class="page">
+    <section style="background:linear-gradient(135deg,#0f172a,#1e3a8a);padding:4rem 5%;color:#fff;">
+        <div style="max-width:700px;margin:0 auto;">
+            <h1 style="font-size:3rem;font-weight:800;margin-bottom:.5rem;">Kanawa<span style="color:#fbbf24">Soft</span></h1>
+            <p style="font-size:1.2rem;margin-bottom:1rem;">Sistema de Gestão Completo ERP — MRP para Windows</p>
+            <div style="display:inline-block;background:rgba(255,255,255,.2);padding:.4rem 1rem;border-radius:40px;font-size:.9rem;">📌 Versão 17.0.0</div>
+            <div style="margin-top:1.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
+                <a href="https://www.mediafire.com/file/o1s1x2cc4fb1144/Kanawa-Soft-ERP-Setup-17.0.0.exe/file" target="_blank" class="btn btn-success btn-lg"><i class="fas fa-download"></i> Baixar</a>
+                <a href="https://wa.me/244946299834?text=Olá,%20gostaria%20de%20uma%20demonstração%20do%20KanawaSoft%20ERP" target="_blank" class="btn btn-warning btn-lg"><i class="fas fa-calendar-alt"></i> Demo</a>
+                <button onclick="navigate('contactos')" class="btn btn-primary btn-lg"><i class="fas fa-envelope"></i> Falar</button>
+            </div>
+        </div>
+    </section>
+    <section class="container">
+        <h2 class="section-title"><i class="fas fa-tag"></i> Licenças</h2>
+        <div class="card-grid">
+            <div class="info-card" style="text-align:center;">
+                <h3>Básico</h3>
+                <div style="font-size:2rem;font-weight:800;color:var(--primary);margin:1rem 0;">14.500 Kz</div>
+                <p style="color:var(--text-muted);font-size:.9rem;">✓ 1 utilizador · PDV + Estoque</p>
+                <button class="btn btn-primary btn-block" style="margin-top:1rem;" onclick="buyLicense('Básico',14500)">Comprar</button>
+            </div>
+            <div class="info-card" style="text-align:center;border:2px solid var(--gold);">
+                <div style="background:var(--gold);color:#000;padding:.2rem .8rem;border-radius:20px;font-size:.75rem;font-weight:700;display:inline-block;">MAIS POPULAR</div>
+                <h3 style="margin:.5rem 0;">Profissional</h3>
+                <div style="font-size:2rem;font-weight:800;color:var(--primary);margin:1rem 0;">29.500 Kz</div>
+                <p style="color:var(--text-muted);font-size:.9rem;">✓ 5 utilizadores · Todos módulos</p>
+                <button class="btn btn-success btn-block" style="margin-top:1rem;" onclick="buyLicense('Profissional',29500)">Comprar</button>
+            </div>
+            <div class="info-card" style="text-align:center;">
+                <h3>Enterprise</h3>
+                <div style="font-size:2rem;font-weight:800;color:var(--primary);margin:1rem 0;">50.500 Kz</div>
+                <p style="color:var(--text-muted);font-size:.9rem;">✓ Ilimitado · Multi-empresa</p>
+                <button class="btn btn-primary btn-block" style="margin-top:1rem;" onclick="buyLicense('Enterprise',50500)">Comprar</button>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div id="page-contactos" class="page">
+    <section class="container" style="padding-top:3rem;">
+        <h2 class="section-title"><i class="fas fa-envelope"></i> Contacte-nos</h2>
+        <div class="card-grid">
+            <div class="info-card"><div class="info-card-icon"><i class="fas fa-map-marker-alt"></i></div><h3>Morada</h3><p>Viana, Vila Flor, Luanda<br>Rua Direita da Engevia</p></div>
+            <div class="info-card"><div class="info-card-icon"><i class="fas fa-phone-alt"></i></div><h3>Telefones</h3><p>+244 946 299 834<br>+244 959 777 301</p></div>
+            <div class="info-card"><div class="info-card-icon"><i class="fas fa-envelope"></i></div><h3>Email</h3><p>dpedroservice@gmail.com</p></div>
+            <div class="info-card"><div class="info-card-icon"><i class="fas fa-clock"></i></div><h3>Horário</h3><p>Seg-Sex: 8h-17h · Sáb: 8h-13h</p></div>
+        </div>
+    </section>
+</div>
+
+<!-- MODAL PRODUTO -->
+<div class="modal" id="productModal">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header"><h2><i class="fas fa-box"></i> Detalhes</h2><button onclick="closeProduct()"><i class="fas fa-times"></i></button></div>
+        <div class="modal-body" id="productDetail"></div>
+    </div>
+</div>
+
+<!-- CARRINHO -->
+<div class="cart-backdrop" id="cartBackdrop" onclick="closeCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header"><h2><i class="fas fa-shopping-cart"></i> Carrinho</h2><button onclick="closeCart()"><i class="fas fa-times"></i></button></div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+        <div class="cart-total"><span>Total:</span><span id="cartTotal">Kz 0</span></div>
+        <button class="btn-checkout" onclick="checkoutWhatsApp()"><i class="fab fa-whatsapp"></i> Finalizar WhatsApp</button>
+        <button class="btn-checkout email" onclick="checkoutEmail()"><i class="fas fa-envelope"></i> Finalizar Email</button>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-grid" style="max-width:1300px;margin:0 auto;">
+        <div class="footer-col"><strong>D.PEDRO SOLUÇÕES</strong><p>Comércio e Prestação de Serviços, Lda.</p><p>Luanda, Angola</p></div>
+        <div class="footer-col"><strong>Sede</strong><p>Viana, Vila Flor, Luanda</p><p>Rua Direita da Engevia</p></div>
+        <div class="footer-col"><strong>Contactos</strong><p>+244 946 299 834</p><p>+244 959 777 301</p><p>dpedroservice@gmail.com</p></div>
+        <div class="footer-col"><strong>Links</strong>
+            <a href="#" onclick="navigate('inicio');return false;">Início</a>
+            <a href="empresa.html">Empresa</a>
+            <a href="#" onclick="navigate('loja');return false;">Loja</a>
+            <a href="#" onclick="navigate('erp');return false;">ERP</a>
+            <a href="#" onclick="navigate('contactos');return false;">Contactos</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div>© 2026 D.PEDRO SOLUÇÕES – Todos os direitos reservados</div>
+        <div><span onclick="alert('🍪 Cookies.')">cookies</span> | <span onclick="alert('📜 Termos.')">termos</span></div>
+    </div>
+</footer>
+
+<a href="https://wa.me/244946299834" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+<div class="top-arrow" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
+<div id="toast"></div>
+<div id="aiAssistant"></div>
+
+<!-- SCRIPTS -->
+<script src="assets/js/products.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/erp-bridge.js"></script>
+<script src="assets/js/ai-assistant.js"></script>
+<script src="assets/js/nav-responsive.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/pwa.js"></script>
+<script>
+function buyLicense(plano, valor) {
+    const nome = prompt('Nome completo:'); if (!nome) return;
+    const tel = prompt('Telefone:'); if (!tel) return;
+    const email = prompt('E-mail:') || '—';
+    const msg = `*LICENÇA KANAWASOFT*\n\n*Plano:* ${plano}\n*Valor:* ${valor.toLocaleString('pt-AO')} Kz\n*Nome:* ${nome}\n*Tel:* ${tel}\n*Email:* ${email}`;
+    window.open(`https://wa.me/244946299834?text=${encodeURIComponent(msg)}`, '_blank');
+}
+// hash routing
+window.addEventListener('hashchange', () => {
+    const h = location.hash.replace('#','');
+    if (h && document.getElementById('page-' + h)) navigate(h);
+});
+</script>
+</body>
+</html>

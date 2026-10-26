@@ -1,0 +1,22 @@
+{
+  "name": "D.PEDRO SOLUÇÕES & KanawaSoft",
+  "short_name": "D.PEDRO",
+  "description": "Tecnologia, Segurança & Energia + Sistema ERP KanawaSoft",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#1e3a8a",
+  "background_color": "#f0f4f8",
+  "lang": "pt-AO",
+  "icons": [
+    { "src": "https://i.ibb.co/hFnw5Br7/logo.jpg", "sizes": "192x192", "type": "image/jpeg", "purpose": "any" },
+    { "src": "https://i.ibb.co/hFnw5Br7/logo.jpg", "sizes": "512x512", "type": "image/jpeg", "purpose": "any" },
+    { "src": "https://i.ibb.co/hFnw5Br7/logo.jpg", "sizes": "512x512", "type": "image/jpeg", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Loja", "url": "./loja.html", "icons": [{ "src": "https://i.ibb.co/hFnw5Br7/logo.jpg", "sizes": "192x192" }] },
+    { "name": "KanawaSoft ERP", "url": "./erp.html", "icons": [{ "src": "https://i.ibb.co/hFnw5Br7/logo.jpg", "sizes": "192x192" }] },
+    { "name": "Contactos", "url": "./contactos.html", "icons": [{ "src": "https://i.ibb.co/hFnw5Br7/logo.jpg", "sizes": "192x192" }] }
+  ]
+}

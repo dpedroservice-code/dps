@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empresa — D.PEDRO SOLUÇÕES</title>
+    <link rel="icon" type="image/png" href="assets/1.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .reveal { opacity:0; transform:translateY(30px); transition:all .8s; }
+        .reveal.visible { opacity:1; transform:translateY(0); }
+        .float-icon { animation:floaty 3s ease-in-out infinite; }
+        @keyframes floaty { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-12px); } }
+        .video-box { position:relative; padding-bottom:56.25%; height:0; border-radius:1.2rem; overflow:hidden; box-shadow:var(--shadow-lg); margin:1.5rem 0; }
+        .video-box iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; }
+        .stat-big { font-size:3rem; font-weight:800; color:var(--primary); text-align:center; }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="contact-info">
+        <span><i class="fas fa-phone-alt"></i> 946 299 834 | 959 777 301</span>
+        <span><i class="fas fa-map-marker-alt"></i> Viana, Vila Flor</span>
+        <span><i class="fas fa-envelope"></i> dpedroservice@gmail.com</span>
+    </div>
+    <div class="social-links">
+        <a href="https://wa.me/244946299834" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        <a href="index.html"><i class="fas fa-home"></i></a>
+    </div>
+</div>
+
+<nav>
+    <a href="index.html" class="logo">
+        <img src="assets/1.png" alt="DP" onerror="this.style.display='none'">
+        <div class="logo-text">D.PEDRO SOLUÇÕES <small>EMPRESA</small></div>
+    </a>
+    <ul class="nav-menu">
+        <li><a href="index.html"><i class="fas fa-home"></i> Início</a></li>
+        <li><a href="empresa.html" class="active"><i class="fas fa-building"></i> Empresa</a></li>
+        <li><a href="index.html#loja" onclick="location.href='index.html#loja';return false;"><i class="fas fa-store"></i> Loja</a></li>
+        <li><a href="index.html#erp" onclick="location.href='index.html#erp';return false;"><i class="fas fa-desktop"></i> ERP</a></li>
+    </ul>
+</nav>
+
+<main class="container">
+
+    <!-- HERO -->
+    <div class="page-hero">
+        <div class="page-hero-content">
+            <div class="breadcrumb"><a href="index.html">Início</a><span>/</span>Empresa</div>
+            <div class="badge"><i class="fas fa-building"></i> Sobre nós</div>
+            <h1>D.PEDRO SOLUÇÕES</h1>
+            <p>Uma equipa angolana dedicada a proteger, conectar e energizar o futuro com tecnologia de confiança.</p>
+            <div style="margin-top:1.5rem;display:flex;gap:.8rem;flex-wrap:wrap;">
+                <button onclick="AI.toggle()" class="btn btn-success"><i class="fas fa-robot"></i> Perguntar à IA</button>
+                <a href="https://wa.me/244946299834" target="_blank" class="btn btn-warning"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ILUSTRAÇÕES + VÍDEO -->
+    <h2 class="section-title reveal"><i class="fas fa-play-circle"></i> Conheça-nos em Vídeo</h2>
+    <div class="video-box reveal">
+        <iframe src="https://www.youtube-nocookie.com/embed/YaVfnptcz9c?start=83&autoplay=0&rel=0&modbranding=1" title="D.PEDRO SOLUÇÕES" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+
+    <!-- QUEM SOMOS -->
+    <h2 class="section-title reveal"><i class="fas fa-users"></i> Quem Somos</h2>
+    <div class="card-grid">
+        <div class="info-card reveal">
+            <div class="info-card-icon float-icon"><i class="fas fa-bullseye"></i></div>
+            <h3>Missão</h3>
+            <p>Proporcionar soluções integradas de tecnologia, segurança eletrónica e energia, com elevados padrões de qualidade, inovação e confiança.</p>
+        </div>
+        <div class="info-card reveal">
+            <div class="info-card-icon float-icon"><i class="fas fa-eye"></i></div>
+            <h3>Visão</h3>
+            <p>Ser a referência nacional em soluções tecnológicas e de segurança, reconhecida pela excelência e compromisso com o cliente.</p>
+        </div>
+        <div class="info-card reveal">
+            <div class="info-card-icon float-icon"><i class="fas fa-heart"></i></div>
+            <h3>Valores</h3>
+            <p>Ética, rigor técnico, inovação contínua, proximidade ao cliente, sustentabilidade e responsabilidade social.</p>
+        </div>
+    </div>
+
+    <!-- GALERIA ANIMADA -->
+    <h2 class="section-title reveal"><i class="fas fa-images"></i> A Nossa Empresa em Imagens</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin:1.5rem 0;" class="reveal">
+        <div style="border-radius:1rem;overflow:hidden;aspect-ratio:1;box-shadow:var(--shadow);transition:.4s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <img src="assets/2.png" alt="Instalação" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+        <div style="border-radius:1rem;overflow:hidden;aspect-ratio:1;box-shadow:var(--shadow);transition:.4s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <img src="assets/3.png" alt="Segurança" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+        <div style="border-radius:1rem;overflow:hidden;aspect-ratio:1;box-shadow:var(--shadow);transition:.4s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <img src="assets/4.png" alt="Energia" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+        <div style="border-radius:1rem;overflow:hidden;aspect-ratio:1;box-shadow:var(--shadow);transition:.4s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <img src="assets/5.png" alt="Tecnologia" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+    </div>
+
+    <!-- ESTATÍSTICAS -->
+    <h2 class="section-title reveal"><i class="fas fa-chart-line"></i> Em Números</h2>
+    <div class="metric-grid reveal">
+        <div class="metric-card"><div class="label">Anos</div><div class="value" data-count="5">0</div></div>
+        <div class="metric-card" style="border-left-color:var(--success)"><div class="label">Clientes</div><div class="value" data-count="200">0</div></div>
+        <div class="metric-card" style="border-left-color:var(--warning)"><div class="label">Produtos</div><div class="value" data-count="100">0</div></div>
+        <div class="metric-card" style="border-left-color:var(--primary-light)"><div class="label">Suporte</div><div class="value" data-count="24">0</div></div>
+    </div>
+
+    <!-- IA ASSISTANT -->
+    <h2 class="section-title reveal" id="ia"><i class="fas fa-robot"></i> Assistente IA</h2>
+    <div class="info-card reveal" style="text-align:center;padding:2rem;">
+        <div class="info-card-icon float-icon" style="margin:0 auto 1rem;width:80px;height:80px;font-size:2.5rem;"><i class="fas fa-robot"></i></div>
+        <h3>Pergunte-me sobre a empresa</h3>
+        <p style="margin:.5rem 0 1.5rem;">Respostas instantâneas sobre produtos, serviços, preços, contactos e muito mais.</p>
+        <button onclick="AI.toggle()" class="btn btn-primary btn-lg"><i class="fas fa-comments"></i> Abrir Assistente</button>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-block reveal">
+        <div><h3>Pronto para falar connosco?</h3><p>A nossa equipa está disponível para ajudar.</p></div>
+        <a href="https://wa.me/244946299834" target="_blank" class="btn btn-success"><i class="fab fa-whatsapp"></i> Falar com Humano</a>
+    </div>
+</main>
+
+<footer>
+    <div class="footer-grid" style="max-width:1300px;margin:0 auto;">
+        <div class="footer-col"><strong>D.PEDRO SOLUÇÕES</strong><p>Comércio e Serviços, Lda.</p><p>Luanda, Angola</p></div>
+        <div class="footer-col"><strong>Contactos</strong><p>+244 946 299 834</p><p>dpedroservice@gmail.com</p></div>
+        <div class="footer-col"><strong>Links</strong><a href="index.html">Início</a><a href="index.html#loja">Loja</a><a href="index.html#erp">ERP</a></div>
+    </div>
+    <div class="footer-bottom"><div>© 2026 D.PEDRO SOLUÇÕES</div></div>
+</footer>
+
+<a href="https://wa.me/244946299834" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+<div id="aiAssistant"></div>
+
+<script src="assets/js/products.js"></script>
+<script src="assets/js/ai-assistant.js"></script>
+<script src="assets/js/nav-responsive.js"></script>
+<script>
+// Reveal on scroll
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Contadores
+document.querySelectorAll('[data-count]').forEach(el => {
+  const target = parseInt(el.dataset.count, 10);
+  if (isNaN(target)) return;
+  let current = 0;
+  const step = Math.max(1, Math.ceil(target / 50));
+  const timer = setInterval(() => {
+    current += step;
+    if (current >= target) { current = target; clearInterval(timer); }
+    el.textContent = current;
+  }, 30);
+});
+</script>
+</body>
+</html>
