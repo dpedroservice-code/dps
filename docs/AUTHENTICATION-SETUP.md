@@ -43,4 +43,4 @@ Projeto: `APP` (`jiehrswweoyesbabrpjf`).
 - O login principal é passwordless OTP: o código de seis dígitos é o fator de acesso. A palavra-passe continua a existir para registo/recuperação e operações futuras, mas o fluxo de entrada não usa password+segundo OTP.
 - A autorização de admin no browser controla a apresentação da interface. Qualquer API, tabela ou função que contenha dados de negócio deve também validar JWT e permissões no servidor e aplicar RLS. Não confiar em esconder botões ou páginas.
 - O painel antigo guarda produtos e pedidos em localStorage. Esta alteração fecha o painel a utilizadores sem role, mas não converte o armazenamento local em base de dados segura multiutilizador.
-- O SDK está fixado em `@supabase/supabase-js@2.57.0` para evitar dependência flutuante; rever e atualizar de forma controlada antes de produção.
+- O SDK está fixado em `@supabase/supabase-js@2.118.0` para evitar dependência flutuante; rever e atualizar de forma controlada antes de produção.
