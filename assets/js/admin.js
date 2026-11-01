@@ -258,11 +258,8 @@
   // ---------- ERP TAB ----------
   function renderErp() {
     if (!window.ERP_BRIDGE) return;
-    const cfg = window.ERP_BRIDGE.getConfig();
-    setVal('erpBaseUrl', cfg.baseURL);
-    setVal('erpApiKey', cfg.apiKey);
-    setVal('erpStoreId', cfg.storeId);
-
+    const status = document.getElementById('erpConnectionStatus');
+    if (status) status.textContent = 'Credenciais geridas no servidor Supabase. A ligação só será considerada ativa depois de uma chamada real confirmada pelo ERP externo.';
     const pluginsBox = document.getElementById('erpPlugins');
     if (pluginsBox) {
       pluginsBox.innerHTML = window.ERP_BRIDGE.loadPlugins().map(pl => `
@@ -271,13 +268,10 @@
             <i class="fab ${pl.icon} fa-lg" style="color:var(--primary);"></i>
             <strong>${pl.name}</strong>
           </div>
-          <button class="btn ${pl.connected ? 'btn-success' : 'btn-primary'}" style="padding:.4rem 1rem;font-size:.8rem;" onclick="ADMIN.togglePlugin('${pl.id}')">
-            ${pl.connected ? '✓ Conectado' : 'Conectar'}
-          </button>
+          <span style="font-size:.8rem;color:var(--text-muted);">${pl.status}</span>
         </div>
       `).join('');
     }
-
     const logsBox = document.getElementById('erpLogs');
     if (logsBox) {
       const logs = window.ERP_BRIDGE.loadLogs().slice(-20).reverse();
@@ -291,25 +285,21 @@
   function setVal(id, v) { const el = document.getElementById(id); if (el) el.value = v || ''; }
 
   function saveErpConfig() {
-    if (!window.ERP_BRIDGE) return;
-    window.ERP_BRIDGE.saveConfig({
-      baseURL: document.getElementById('erpBaseUrl').value.trim(),
-      apiKey: document.getElementById('erpApiKey').value.trim(),
-      storeId: document.getElementById('erpStoreId').value.trim()
-    });
-    showToast('✅ Configuração ERP guardada');
+    showToast('Configure as credenciais no Supabase, nunca no navegador.');
   }
-  function togglePlugin(id) {
+  function togglePlugin() {
+    showToast('Este conector ainda não tem integração/API validada.');
+  }
+  async function syncProducts() {
     if (!window.ERP_BRIDGE) return;
-    window.ERP_BRIDGE.togglePlugin(id);
+    const status = document.getElementById('erpConnectionStatus');
+    if (status) status.textContent = 'A testar a integração com o servidor…';
+    const result = await window.ERP_BRIDGE.syncProducts();
+    if (status) status.textContent = result.ok
+      ? 'Sincronização confirmada: ' + result.succeeded + ' produto(s).'
+      : 'Falha real: ' + result.succeeded + ' concluído(s), ' + result.failed + ' falhado(s). ' + (result.results.find(x => !x.ok)?.error || 'Verifique configuração e contrato da API.');
+    showToast(result.ok ? 'Sincronização confirmada.' : 'A integração não confirmou o sucesso.');
     renderErp();
-  }
-  function syncProducts() {
-    if (!window.ERP_BRIDGE) return;
-    window.ERP_BRIDGE.syncProducts().then(r => {
-      showToast(`🔄 ${r.total} produtos sincronizados`);
-      renderErp();
-    });
   }
 
   // ---------- SWITCH TABS ----------
