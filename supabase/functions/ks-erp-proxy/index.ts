@@ -9,6 +9,7 @@ const ERP_API_STORE_ID = Deno.env.get("ERP_API_STORE_ID") ?? "";
 const ALLOWED_ORIGINS = new Set([
   "https://dpedrosolucoes.shop",
   "https://dpedrosolucoeslda.netlify.app",
+  "https://deploy-preview-2--dpedrosolucoeslda.netlify.app",
   "http://localhost:3000",
   "http://localhost:5173"
 ]);
@@ -109,22 +110,26 @@ Deno.serve(async (req: Request) => {
 
     if (membershipError || !membership) return json(403, { error: "Não existe uma associação ativa a esta empresa." }, origin);
 
-    const { data: license, error: licenseError } = await admin
+    const { data: licenses, error: licenseError } = await admin
       .from("ks_company_licenses")
       .select("status,expires_at,grace_until")
       .eq("company_id", companyId)
-      .maybeSingle();
+      .order("created_at", { ascending: false })
+      .limit(10);
 
-    if (licenseError || !license) return json(403, { error: "Licença da empresa não encontrada." }, origin);
+    if (licenseError || !licenses?.length) return json(403, { error: "Licença da empresa não encontrada." }, origin);
     const now = Date.now();
-    const expiry = license.expires_at ? Date.parse(license.expires_at) : Number.POSITIVE_INFINITY;
-    const grace = license.grace_until ? Date.parse(license.grace_until) : 0;
-    const licenseValid =
-      (["trial", "active"].includes(license.status) && (expiry >= now || grace >= now)) ||
-      (license.status === "past_due" && grace >= now);
+    const licenseValid = licenses.some((license) => {
+      const expiry = license.expires_at ? Date.parse(license.expires_at) : Number.POSITIVE_INFINITY;
+      const grace = license.grace_until ? Date.parse(license.grace_until) : 0;
+      return (["trial", "active"].includes(license.status) && (expiry >= now || grace >= now)) ||
+        (license.status === "past_due" && grace >= now);
+    });
     if (!licenseValid) return json(403, { error: "A licença da empresa está expirada ou suspensa." }, origin);
 
     const role = String(membership.role ?? "");
+    const allowedRoles = ["owner", "admin", "manager", "operator", "cashier", "accountant", "viewer"];
+    if (!allowedRoles.includes(role)) return json(403, { error: "Perfil de utilizador não reconhecido." }, origin);
     const elevated = ["owner", "admin"].includes(role);
     const permitted = elevated || eventConfig.permissions.some(([module, action]) =>
       hasPermission((membership.permissions ?? {}) as Record<string, unknown>, module, action)
