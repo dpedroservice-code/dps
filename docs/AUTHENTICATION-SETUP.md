@@ -25,7 +25,7 @@ Projeto: `APP` (`jiehrswweoyesbabrpjf`).
    - Editar também o template **Confirm signup** para incluir `{{ .Token }}`, sem depender apenas de um link mágico.
    - Manter validade curta (por exemplo 10 minutos) e rate limits adequados.
 3. Authentication → SMTP Settings:
-   - Configurar SMTP transacional. Se usar Gmail, usar conta empresarial dedicada e palavra-passe de aplicação com 2FA; nunca usar a palavra-passe normal do Gmail.
+   - Configurar SMTP transacional personalizado (este projeto foi criado em 2026; projetos Free novos não podem personalizar templates usando o SMTP padrão). Se usar Gmail, usar conta empresarial dedicada e palavra-passe de aplicação com 2FA; nunca usar a palavra-passe normal do Gmail.
    - Inserir host, porta, utilizador, palavra-passe de aplicação e remetente no painel Supabase. Estes segredos não pertencem ao GitHub nem ao browser.
    - O envio real de e-mails só funciona depois desta configuração e de o fornecedor aceitar o remetente.
 4. Authentication → Security and Protection:
