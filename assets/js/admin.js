@@ -5,7 +5,6 @@
 'use strict';
 
 (function () {
-  const ADMIN_PASSWORD = 'dpedro2026';
   const STORAGE_ORDERS = 'dpedro_orders';
 
   let products = [];
@@ -23,24 +22,13 @@
     t._timer = setTimeout(() => t.classList.remove('show'), 2500);
   }
 
-  // ---------- LOGIN ----------
+  // ---------- LOGIN / SESSÃO SEGURA ----------
   function doLogin() {
-    const pass = document.getElementById('adminPassword')?.value;
-    if (pass === ADMIN_PASSWORD) {
-      localStorage.setItem('dpedro_admin', 'true');
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('adminPanel').style.display = 'block';
-      products = window.DPEDRO_DB.loadProducts();
-      renderAdmin();
-      showToast('✅ Login efetuado');
-    } else {
-      const e = document.getElementById('loginError');
-      if (e) e.textContent = '❌ Senha incorreta';
-    }
+    window.location.href = 'login.html?next=' + encodeURIComponent('admin.html');
   }
-  function logout() {
-    localStorage.removeItem('dpedro_admin');
-    location.reload();
+  async function logout() {
+    if (window.DPAuth) await window.DPAuth.signOut();
+    window.location.replace('login.html');
   }
 
   // ---------- FILTROS ----------
@@ -359,9 +347,10 @@
   }
 
   // ---------- INIT ----------
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
     products = window.DPEDRO_DB.loadProducts();
-    if (localStorage.getItem('dpedro_admin') === 'true') {
+    const allowed = window.DPAuth ? await window.DPAuth.requireAdmin() : false;
+    if (allowed) {
       const ls = document.getElementById('loginScreen');
       const ap = document.getElementById('adminPanel');
       if (ls) ls.style.display = 'none';
