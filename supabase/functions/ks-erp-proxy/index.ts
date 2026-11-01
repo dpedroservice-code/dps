@@ -33,7 +33,7 @@ const EVENTS = {
 };
 
 function json(status: number, body: Record<string, unknown>, origin: string) {
-  return new Response(JSON.stringify(body), {
+  return new Response(status === 204 ? null : JSON.stringify(body), {
     status,
     headers: {
       "Content-Type": "application/json",
@@ -131,7 +131,7 @@ Deno.serve(async (req: Request) => {
     );
     if (!permitted) return json(403, { error: "O seu perfil não tem permissão para executar esta integração." }, origin);
 
-    const target = new URL(eventConfig.path, base.toString().replace(/\/+$/, "") + "/");
+    const target = new URL(base.toString().replace(/\/+$/, "") + eventConfig.path);
     const upstream = await fetch(target, {
       method: "POST",
       headers: {
