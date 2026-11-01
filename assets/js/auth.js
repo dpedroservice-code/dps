@@ -106,17 +106,6 @@
     return true;
   }
 
-  async function changePassword(currentPassword, newPassword) {
-    if (String(newPassword || '').length < 10) throw new Error('A nova palavra-passe deve ter pelo menos 10 caracteres.');
-    const { data: { user }, error: userError } = await client.auth.getUser();
-    if (userError || !user?.email) throw new Error('Inicie sessão novamente.');
-    const { error: checkError } = await client.auth.signInWithPassword({ email: user.email, password: currentPassword });
-    if (checkError) throw new Error('A palavra-passe atual está incorreta.');
-    const { error } = await client.auth.updateUser({ password: newPassword });
-    if (error) throw new Error(cleanError(error));
-    return true;
-  }
-
   async function getSession() {
     const { data, error } = await client.auth.getSession();
     if (error) throw new Error(cleanError(error));
@@ -156,7 +145,7 @@
   window.DPAuth = Object.freeze({
     client, ready: Promise.resolve(true), sendLoginCode, verifyLoginCode,
     register, verifyRegistrationCode, resendRegistrationCode,
-    requestPasswordReset, setNewPassword, changePassword,
+    requestPasswordReset, setNewPassword,
     getSession, getUser, isAdmin, requireAdmin, signOut
   });
 })();
