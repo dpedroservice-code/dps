@@ -154,11 +154,11 @@
       window.location.replace('login.html?next=' + encodeURIComponent('admin.html'));
       return false;
     }
-    if (!isAdmin(user)) {
-      document.body.innerHTML = '<main style="max-width:620px;margin:10vh auto;padding:28px;font:16px system-ui;text-align:center"><h1>Acesso não autorizado</h1><p>A sua conta não tem permissões administrativas. Contacte o administrador do sistema.</p><button onclick="DPAuth.signOut().then(()=>location.href=\'login.html\')">Terminar sessão</button></main>';
-      return false;
-    }
-    return true;
+    if (isAdmin(user)) return true;
+    const membership = await getActiveMembership().catch(() => null);
+    if (membership && ['owner', 'admin'].includes(membership.role)) return true;
+    document.body.innerHTML = '<main style="max-width:620px;margin:10vh auto;padding:28px;font:16px system-ui;text-align:center"><h1>Acesso não autorizado</h1><p>A sua conta não tem permissões de proprietário ou administrador nesta empresa.</p><button onclick="DPAuth.signOut().then(()=>location.href=\'login.html\')">Terminar sessão</button></main>';
+    return false;
   }
 
   async function signOut() {
