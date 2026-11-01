@@ -187,7 +187,7 @@
 
     // sincroniza com ERP
     if (window.ERP_BRIDGE && data.status === 'publicado') {
-      window.ERP_BRIDGE.webhookProductPublish(data).catch(() => {});
+      window.ERP_BRIDGE.webhookProductPublish(data).then(r => { if (!r.ok) showToast('Aviso: produto guardado localmente, mas não sincronizado com ERP: ' + r.error); });
     }
   }
 
@@ -202,7 +202,7 @@
     renderAdmin();
     showToast(`Estado: ${p.status}`);
     if (window.ERP_BRIDGE && p.status === 'publicado') {
-      window.ERP_BRIDGE.webhookProductPublish(p).catch(() => {});
+      window.ERP_BRIDGE.webhookProductPublish(p).then(r => { if (!r.ok) showToast('Aviso: estado atualizado localmente, mas não sincronizado com ERP: ' + r.error); });
     }
   }
 
