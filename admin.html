@@ -124,9 +124,11 @@
 
         <div style="background:var(--card);padding:1.5rem;border-radius:var(--radius);margin:1rem 0;">
             <h3 style="margin-bottom:1rem;color:var(--text);">🔐 Ligação segura ao ERP</h3>
-            <p style="color:var(--text-muted);margin-bottom:1rem;">A ponte segura lê, em modo somente leitura, os produtos ativos da tabela de catálogo do KanawaSoft (ks_products) para a empresa autorizada. O Supabase valida a sessão e a associação à empresa; a chave service_role nunca é enviada ao navegador. Os produtos sincronizados ficam em rascunho até aprovação.</p>
-            <div id="erpConnectionStatus" role="status" style="padding:1rem;border-radius:.7rem;background:var(--bg);margin-bottom:1rem;">Estado: aguarda configuração e teste do serviço ERP.</div>
-            <button class="btn btn-success" onclick="ADMIN.syncProducts()"><i class="fas fa-sync-alt"></i> Sincronizar produtos do KanawaSoft</button>
+            <p style="color:var(--text-muted);margin-bottom:1rem;">A ligação emite uma chave exclusiva com permissão somente de leitura no KanawaSoft 1.2.0. O segredo é enviado diretamente ao servidor e guardado no Supabase Vault; não fica no navegador nem é apresentado novamente. A finalidade fica registada para auditoria. A sincronização importa os produtos para revisão e não os publica automaticamente.</p>
+            <label for="kanawaApiPurpose" style="display:block;margin:.7rem 0 .35rem;font-weight:700;">Finalidade da chave de API</label>
+            <input id="kanawaApiPurpose" type="text" value="Leitura do catálogo do KanawaSoft para revisão e publicação na loja online D.PEDRO SOLUÇÕES." maxlength="240" style="width:100%;padding:.8rem;border:1px solid var(--border);border-radius:.6rem;background:var(--bg);color:var(--text);margin-bottom:.8rem;">
+            <div id="erpConnectionStatus" role="status" style="padding:1rem;border-radius:.7rem;background:var(--bg);margin-bottom:1rem;">Estado: API ainda não ligada.</div>
+            <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem;"><button class="btn btn-primary" onclick="ADMIN.connectKanawa()"><i class="fas fa-key"></i> Ligar / emitir chave de API</button><button class="btn btn-success" onclick="ADMIN.syncProducts()"><i class="fas fa-sync-alt"></i> Sincronizar produtos do KanawaSoft</button></div>
         </div>
 
         <div style="background:var(--card);padding:1.5rem;border-radius:var(--radius);margin:1rem 0;">
