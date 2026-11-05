@@ -266,7 +266,15 @@
   function renderErp() {
     if (!window.ERP_BRIDGE) return;
     const status = document.getElementById('erpConnectionStatus');
-    if (status) status.textContent = 'Credenciais geridas no servidor Supabase. A ligação só será considerada ativa depois de uma chamada real confirmada pelo ERP externo.';
+    if (status) status.textContent = 'A consultar o estado da API KanawaSoft…';
+    if (window.DPS_CLOUD_STORE) {
+      window.DPS_CLOUD_STORE.apiStatus().then(result => {
+        const integration = result.integration;
+        if (status) status.textContent = result.connected && integration
+          ? 'API ligada · ' + integration.api_name + ' · Chave ' + integration.api_key_prefix + ' · Última consulta: ' + (integration.last_connected_at ? new Date(integration.last_connected_at).toLocaleString('pt-AO') : 'ainda não consultada') + '. Segredo protegido no Supabase Vault.'
+          : 'API ainda não ligada. Emita a chave de leitura para começar.';
+      }).catch(error => { if (status) status.textContent = 'Estado da API indisponível: ' + error.message; });
+    }
     const pluginsBox = document.getElementById('erpPlugins');
     if (pluginsBox) {
       pluginsBox.innerHTML = window.ERP_BRIDGE.loadPlugins().map(pl => `
@@ -340,6 +348,20 @@
   function togglePlugin() {
     showToast('Este conector ainda não tem integração/API validada.');
   }
+  async function connectKanawa() {
+    const status = document.getElementById('erpConnectionStatus');
+    const purpose = document.getElementById('kanawaApiPurpose')?.value || '';
+    if (status) status.textContent = 'A emitir a chave de leitura e a guardar o segredo no cofre seguro…';
+    try {
+      const result = await window.DPS_CLOUD_STORE.connectKanawa(purpose);
+      if (status) status.textContent = 'API ligada: ' + result.api_name + ' · Chave ' + result.api_key_prefix + '. O segredo foi guardado no Supabase Vault e não é apresentado novamente.';
+      showToast('API KanawaSoft ligada com permissão de leitura.');
+    } catch (error) {
+      if (status) status.textContent = 'Não foi possível ligar a API: ' + error.message;
+      showToast('Ligação API não concluída: ' + error.message);
+    }
+  }
+
   async function syncProducts() {
     const status = document.getElementById('erpConnectionStatus');
     if (status) status.textContent = 'A consultar os produtos ativos do KanawaSoft…';
@@ -429,7 +451,7 @@
     openForm, closeForm, saveForm, editProduct,
     toggleStatus, deleteProduct, shareProduct,
     exportAll, resetAll, switchTab,
-    renderErp, saveErpConfig, togglePlugin, syncProducts,
+    renderErp, saveErpConfig, togglePlugin, connectKanawa, syncProducts,
     renderOrders, renderOverview, refresh
   };
   window.doLogin = doLogin;
