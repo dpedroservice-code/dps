@@ -169,11 +169,11 @@
                 <div class="form-group"><label>Garantia</label><input type="text" id="formWarranty"></div>
             </div>
             <div class="form-row">
-                <div class="form-group"><label>Preço (Kz) *</label><input type="number" id="formPrice"></div>
-                <div class="form-group"><label>Promo (Kz)</label><input type="number" id="formPromo"></div>
+                <div class="form-group"><label for="formPrice">Preço (Kz) *</label><input type="number" id="formPrice" min="1" step="1" required inputmode="numeric"></div>
+                <div class="form-group"><label for="formPromo">Promo (Kz)</label><input type="number" id="formPromo" min="1" step="1" inputmode="numeric"></div>
             </div>
             <div class="form-row">
-                <div class="form-group"><label>Stock</label><input type="number" id="formStock"></div>
+                <div class="form-group"><label for="formStock">Stock</label><input type="number" id="formStock" min="0" step="1" value="0" inputmode="numeric"></div>
                 <div class="form-group"><label>Imagem (URL)</label><input type="text" id="formImage" placeholder="assets/1.png"></div>
             </div>
             <div class="form-group"><label>Especificações</label><input type="text" id="formSpecs"></div>
