@@ -293,9 +293,9 @@
         <div style="display:flex;align-items:center;justify-content:space-between;padding:.8rem;background:var(--bg);border-radius:.6rem;margin-bottom:.5rem;">
           <div style="display:flex;align-items:center;gap:.6rem;">
             <i class="fab ${pl.icon} fa-lg" style="color:var(--primary);"></i>
-            <strong>${pl.name}</strong>
+            <strong>${escapeHtml(pl.name)}</strong>
           </div>
-          <span style="font-size:.8rem;color:var(--text-muted);">${pl.status}</span>
+          <span style="font-size:.8rem;color:var(--text-muted);">${escapeHtml(pl.status)}</span>
         </div>
       `).join('');
     }
@@ -304,7 +304,7 @@
       const logs = window.ERP_BRIDGE.loadLogs().slice(-20).reverse();
       logsBox.innerHTML = logs.length
         ? logs.map(l => `<div style="font-size:.78rem;padding:.4rem .6rem;border-left:3px solid var(--primary);margin-bottom:.3rem;background:var(--bg);">
-            <strong>${l.type}</strong> · ${new Date(l.date).toLocaleString('pt-AO')}
+            <strong>${escapeHtml(l.type)}</strong> · ${new Date(l.date).toLocaleString('pt-AO')}
           </div>`).join('')
         : '<div style="color:var(--text-muted);font-size:.85rem;">Sem eventos.</div>';
     }
@@ -396,7 +396,7 @@
           <strong>#${o.id.toString().slice(-6)}</strong>
           <small style="color:var(--text-muted)">${new Date(o.date).toLocaleString('pt-AO')}</small>
           <span style="color:var(--success);font-weight:700;">${window.DPEDRO_DB.fmtKz(o.total)}</span>
-          <span style="background:var(--primary);color:#fff;padding:.2rem .6rem;border-radius:20px;font-size:.75rem;">${o.method}</span>
+          <span style="background:var(--primary);color:#fff;padding:.2rem .6rem;border-radius:20px;font-size:.75rem;">${escapeHtml(o.method || 'Não indicado')}</span>
         </div>
         <div style="font-size:.85rem;color:var(--text-muted);">
           ${o.items.map(i => `• ${escapeHtml(i.name)} (x${i.qty}) - ${window.DPEDRO_DB.fmtKz(i.price * i.qty)}`).join('<br>')}
