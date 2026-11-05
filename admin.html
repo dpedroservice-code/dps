@@ -64,7 +64,7 @@
 <header class="admin-welcome"><div><span class="admin-eyebrow">CENTRO DE GESTÃO</span><h1>Painel administrativo</h1><p>Gestão operacional, catálogo, pedidos e integrações da D.PEDRO SOLUÇÕES.</p></div><div class="admin-welcome-actions"><span class="admin-session"><i class="fas fa-shield-alt"></i> Sessão protegida</span><a class="btn btn-secondary" href="index.html">Ver website</a></div></header>
     <div class="admin-tabs" role="tablist" aria-label="Secções administrativas">
         <button class="admin-tab active" role="tab" aria-selected="true" onclick="ADMIN.switchTab('overview',this)"><i class="fas fa-chart-pie"></i> Visão geral</button>
-        <button class="admin-tab active" onclick="ADMIN.switchTab('products',this)"><i class="fas fa-box"></i> Produtos</button>
+        <button class="admin-tab" role="tab" aria-selected="false" onclick="ADMIN.switchTab('products',this)"><i class="fas fa-box"></i> Produtos</button>
         <button class="admin-tab" onclick="ADMIN.switchTab('orders',this)"><i class="fas fa-receipt"></i> Pedidos</button>
         <button class="admin-tab" onclick="ADMIN.switchTab('erp',this)"><i class="fas fa-plug"></i> ERP & API</button>
         <button class="admin-tab" onclick="ADMIN.switchTab('tools',this)"><i class="fas fa-tools"></i> Ferramentas</button>
@@ -73,7 +73,7 @@
     <section id="tabOverview" class="admin-content" role="tabpanel"><div class="admin-section-heading"><div><h2>Resumo da operação</h2><p>Indicadores calculados a partir dos dados disponíveis neste navegador.</p></div><button class="btn btn-primary" onclick="ADMIN.refresh()">Atualizar dados</button></div><div class="admin-kpi-grid"><article class="admin-kpi"><span>Produtos no catálogo</span><strong id="overviewProducts">0</strong><small>Registos locais</small></article><article class="admin-kpi"><span>Produtos publicados</span><strong id="overviewPublished">0</strong><small>Estado do catálogo</small></article><article class="admin-kpi"><span>Stock baixo</span><strong id="overviewLowStock">0</strong><small>Até 5 unidades</small></article><article class="admin-kpi"><span>Pedidos registados</span><strong id="overviewOrders">0</strong><small>Registos locais</small></article><article class="admin-kpi"><span>Valor dos pedidos</span><strong id="overviewRevenue">0 Kz</strong><small>Soma local</small></article></div><div class="admin-overview-grid"><section class="admin-panel"><h3>Atenção operacional</h3><div id="overviewAlerts" class="admin-list"></div></section><section class="admin-panel"><h3>Atividade recente</h3><div id="overviewActivity" class="admin-list"></div></section></div><p class="admin-data-note">Indicadores locais. Produtos e pedidos ainda não estão sincronizados entre dispositivos nem consolidados no Supabase.</p></section>
 
     <!-- TAB PRODUTOS -->
-    <div id="tabProducts" class="admin-content">
+    <div id="tabProducts" class="admin-content" style="display:none;" role="tabpanel">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
             <h2><i class="fas fa-box"></i> Produtos</h2>
             <button class="btn btn-success" onclick="ADMIN.openForm()"><i class="fas fa-plus"></i> Novo Produto</button>
