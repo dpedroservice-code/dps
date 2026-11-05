@@ -44,7 +44,7 @@
   function filteredProducts() {
     return products.filter(p => {
       const matchStatus = currentFilter === 'all' || p.status === currentFilter;
-      const matchSearch = !currentSearch || p.name.toLowerCase().includes(currentSearch) ||
+      const matchSearch = !currentSearch || String(p.name || '').toLowerCase().includes(currentSearch) ||
                           (p.brand || '').toLowerCase().includes(currentSearch);
       return matchStatus && matchSearch;
     });
@@ -53,6 +53,7 @@
   // ---------- RENDER ----------
   function renderAdmin() {
     products = window.DPEDRO_DB.loadProducts();
+    renderOverview();
     // stats
     const counts = {
       total: products.length,
@@ -303,6 +304,45 @@
         : '<div style="color:var(--text-muted);font-size:.85rem;">Sem eventos.</div>';
     }
   }
+  function renderOverview() {
+    const items = window.DPEDRO_DB ? window.DPEDRO_DB.loadProducts() : [];
+    let orders = [];
+    try { orders = JSON.parse(localStorage.getItem(STORAGE_ORDERS) || '[]'); } catch (e) { orders = []; }
+    const lowStock = items.filter(p => Number(p.stock) >= 0 && Number(p.stock) <= 5);
+    const revenue = orders.reduce((sum, order) => sum + (Number(order.total) || 0), 0);
+    setText('overviewProducts', items.length);
+    setText('overviewPublished', items.filter(p => p.status === 'publicado').length);
+    setText('overviewLowStock', lowStock.length);
+    setText('overviewOrders', orders.length);
+    setText('overviewRevenue', window.DPEDRO_DB ? window.DPEDRO_DB.fmtKz(revenue) : revenue.toLocaleString('pt-AO') + ' Kz');
+
+    const alerts = [];
+    if (!items.length) alerts.push('O catálogo ainda não contém produtos.');
+    if (lowStock.length) alerts.push(lowStock.length + ' produto(s) com stock igual ou inferior a 5 unidades.');
+    if (!orders.length) alerts.push('Ainda não existem pedidos locais registados.');
+    if (!window.DPAuth) alerts.push('Módulo de autenticação não foi carregado; confirme a configuração antes de disponibilizar o painel.');
+    const alertBox = document.getElementById('overviewAlerts');
+    if (alertBox) alertBox.innerHTML = alerts.length
+      ? alerts.map(message => '<div class="admin-list-item"><i class="fas fa-info-circle"></i><span>' + escapeHtml(message) + '</span></div>').join('')
+      : '<div class="admin-list-item"><i class="fas fa-check-circle"></i><span>Sem alertas operacionais identificados nos dados locais.</span></div>';
+
+    const activity = items.filter(p => p.updatedAt || p.createdAt)
+      .sort((a,b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))
+      .slice(0,5);
+    const activityBox = document.getElementById('overviewActivity');
+    if (activityBox) activityBox.innerHTML = activity.length
+      ? activity.map(p => '<div class="admin-list-item"><i class="fas fa-box"></i><span><strong>' + escapeHtml(p.name || 'Produto sem nome') + '</strong><br><small>' + escapeHtml(new Date(p.updatedAt || p.createdAt).toLocaleString('pt-AO')) + ' · ' + escapeHtml(p.status || 'sem estado') + '</small></span></div>').join('')
+      : '<p class="admin-muted">Ainda não há atividade de produtos para apresentar.</p>';
+  }
+
+  function refresh() {
+    products = window.DPEDRO_DB.loadProducts();
+    renderAdmin();
+    renderOrders();
+    renderErp();
+    showToast('Dados do painel atualizados.');
+  }
+
   function setVal(id, v) { const el = document.getElementById(id); if (el) el.value = v || ''; }
 
   function saveErpConfig() {
@@ -325,10 +365,13 @@
 
   // ---------- SWITCH TABS ----------
   function switchTab(tab, btn) {
-    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
+    document.querySelectorAll('.admin-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+    if (btn) { btn.classList.add('active'); btn.setAttribute('aria-selected', 'true'); }
     document.querySelectorAll('.admin-content').forEach(c => c.style.display = 'none');
-    document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).style.display = 'block';
+    const panel = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+    if (panel) panel.style.display = 'block';
+    if (tab === 'overview') renderOverview();
+    if (tab === 'products') renderAdmin();
     if (tab === 'orders') renderOrders();
     if (tab === 'erp') renderErp();
   }
@@ -366,7 +409,8 @@
       const ap = document.getElementById('adminPanel');
       if (ls) ls.style.display = 'none';
       if (ap) ap.style.display = 'block';
-      renderAdmin();
+      const overviewTab = document.querySelector('.admin-tab[onclick*=\"overview\"]');
+      switchTab('overview', overviewTab);
     }
     document.getElementById('formModal')?.addEventListener('click', e => {
       if (e.target.id === 'formModal') closeForm();
@@ -379,7 +423,7 @@
     toggleStatus, deleteProduct, shareProduct,
     exportAll, resetAll, switchTab,
     renderErp, saveErpConfig, togglePlugin, syncProducts,
-    renderOrders
+    renderOrders, renderOverview, refresh
   };
   window.doLogin = doLogin;
   window.openForm = openForm;
