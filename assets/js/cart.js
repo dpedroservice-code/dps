@@ -36,14 +36,16 @@
     const idx = items.findIndex(i => i.id === product.id);
     const price = product.promo || product.price;
     if (idx > -1) {
-      items[idx].qty = Math.min(product.stock, items[idx].qty + qty);
+      items[idx].stock = Number(product.stock) || items[idx].stock || 0;
+      items[idx].qty = Math.min(items[idx].stock, items[idx].qty + qty);
     } else {
       items.push({
         id: product.id,
         name: product.name,
         price,
         image: product.image,
-        qty: Math.min(product.stock, qty)
+        stock: Number(product.stock) || 0,
+        qty: Math.min(Number(product.stock) || 0, qty)
       });
     }
     saveCart(items);
@@ -61,7 +63,7 @@
     const items = loadCart();
     const it = items.find(i => i.id === id);
     if (!it) return;
-    it.qty = Math.max(1, it.qty + delta);
+    it.qty = Math.max(1, Math.min(Number(it.stock) || 999999, it.qty + delta));
     saveCart(items);
     renderCart();
   }
@@ -118,29 +120,66 @@
     } catch (e) {}
   }
 
-  function checkoutWhatsApp() {
+  async function checkoutWhatsApp() {
     const items = loadCart();
     if (!items.length) { alert('Carrinho vazio'); return; }
+    const popup = window.open('about:blank', '_blank');
     const total = items.reduce((s, i) => s + i.price * i.qty, 0);
-    let msg = '*PEDIDO — D.PEDRO SOLUÇÕES*\n\n';
-    items.forEach(i => { msg += `• ${i.name} (x${i.qty}) — ${fmtKz(i.price * i.qty)}\n`; });
-    msg += `\n*TOTAL:* ${fmtKz(total)}`;
-    saveOrder('WhatsApp', items, total);
+    let order = null;
+    let localRef = '';
+    try {
+      if (window.DPS_CLOUD_STORE) order = await window.DPS_CLOUD_STORE.createOrder('WhatsApp', items);
+      else throw new Error('Serviço de sincronização indisponível.');
+    } catch (error) {
+      if (error.status && error.status >= 400 && error.status < 500) {
+        if (popup) popup.close();
+        alert(error.message || 'O pedido não foi registado porque o stock ou os produtos mudaram. Atualize o carrinho.');
+        return;
+      }
+      localRef = window.DPS_CLOUD_STORE?.queueOrder('WhatsApp', items) || ('LOCAL-' + Date.now());
+      saveOrder('WhatsApp - sincronização pendente', items, total);
+    }
+    const reference = order?.order_number || localRef;
+    let msg = '*PEDIDO — D.PEDRO SOLUÇÕES*\\n';
+    if (reference) msg += '*Referência:* ' + reference + '\\n';
+    msg += '\\n';
+    items.forEach(i => { msg += '• ' + i.name + ' (x' + i.qty + ') — ' + fmtKz(i.price * i.qty) + '\\n'; });
+    msg += '\\n*TOTAL APRESENTADO:* ' + fmtKz(total);
+    if (order?.total != null) msg += '\\n*TOTAL VALIDADO NO SERVIDOR:* ' + fmtKz(order.total);
+    msg += '\\n\\nAguardo confirmação de disponibilidade e pagamento.';
     if (typeof gtag === 'function') gtag('event', 'purchase', { value: total, currency: 'AOA' });
-    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+    const waUrl = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg);
+    if (popup && !popup.closed) popup.location.href = waUrl;
+    else window.location.href = waUrl;
     localStorage.removeItem(STORAGE_CART);
     renderCart(); updateBadge(); closeCart();
   }
 
-  function checkoutEmail() {
+  async function checkoutEmail() {
     const items = loadCart();
     if (!items.length) { alert('Carrinho vazio'); return; }
     const total = items.reduce((s, i) => s + i.price * i.qty, 0);
-    let body = 'PEDIDO — D.PEDRO SOLUÇÕES\n\n';
-    items.forEach(i => { body += `${i.name} (x${i.qty}) — ${fmtKz(i.price * i.qty)}\n`; });
-    body += `\nTOTAL: ${fmtKz(total)}`;
-    saveOrder('Email', items, total);
-    window.location.href = `mailto:${EMAIL}?subject=Pedido%20D.PEDRO&body=${encodeURIComponent(body)}`;
+    let order = null;
+    let localRef = '';
+    try {
+      if (window.DPS_CLOUD_STORE) order = await window.DPS_CLOUD_STORE.createOrder('Email', items);
+      else throw new Error('Serviço de sincronização indisponível.');
+    } catch (error) {
+      if (error.status && error.status >= 400 && error.status < 500) {
+        alert(error.message || 'O pedido não foi registado porque o stock ou os produtos mudaram. Atualize o carrinho.');
+        return;
+      }
+      localRef = window.DPS_CLOUD_STORE?.queueOrder('Email', items) || ('LOCAL-' + Date.now());
+      saveOrder('Email - sincronização pendente', items, total);
+    }
+    let body = 'PEDIDO — D.PEDRO SOLUÇÕES\\n';
+    if (order?.order_number || localRef) body += 'Referência: ' + (order?.order_number || localRef) + '\\n';
+    body += '\\n';
+    items.forEach(i => { body += i.name + ' (x' + i.qty + ') — ' + fmtKz(i.price * i.qty) + '\\n'; });
+    body += '\\nTOTAL APRESENTADO: ' + fmtKz(total);
+    if (order?.total != null) body += '\\nTOTAL VALIDADO NO SERVIDOR: ' + fmtKz(order.total);
+    body += '\\n\\nAguardo confirmação de disponibilidade e pagamento.';
+    window.location.href = 'mailto:' + EMAIL + '?subject=Pedido%20D.PEDRO&body=' + encodeURIComponent(body);
     localStorage.removeItem(STORAGE_CART);
     renderCart(); updateBadge(); closeCart();
   }
