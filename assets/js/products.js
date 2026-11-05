@@ -1,5 +1,5 @@
 /* =========================================================
-   D.PEDRO SOLUÇÕES — BASE DE DADOS (100 PRODUTOS)
+   D.PEDRO SOLUÇÕES — CATÁLOGO DE PRODUTOS
    Imagens: assets/1.png → assets/100.png
    Estados: publicado | rascunho | partilhado
    ========================================================= */
@@ -19,7 +19,7 @@
     { id: 'servicos',    name: 'Serviços Empresariais',    icon: 'fa-briefcase' }
   ];
 
-  /* Gerador de 100 produtos — distribui pelas 7 categorias */
+  /* Dados de demonstração legados: nunca são publicados automaticamente. */
   const seedProducts = (() => {
     const base = [
       // 1-15 Informática
