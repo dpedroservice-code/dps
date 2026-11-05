@@ -153,8 +153,29 @@
   function saveForm() {
     const id = document.getElementById('formId').value;
     const name = document.getElementById('formName').value.trim();
-    const price = parseInt(document.getElementById('formPrice').value);
-    if (!name || !price) { alert('Preencha nome e preço'); return; }
+    const priceRaw = document.getElementById('formPrice').value.trim();
+    const promoRaw = document.getElementById('formPromo').value.trim();
+    const stockRaw = document.getElementById('formStock').value.trim();
+    const price = Number(priceRaw);
+    const promo = promoRaw === '' ? null : Number(promoRaw);
+    const stock = stockRaw === '' ? 0 : Number(stockRaw);
+
+    if (name.length < 2) {
+      alert('Introduza um nome de produto com pelo menos 2 caracteres.');
+      return;
+    }
+    if (!Number.isSafeInteger(price) || price <= 0) {
+      alert('O preço deve ser um número inteiro maior que zero.');
+      return;
+    }
+    if (promo !== null && (!Number.isSafeInteger(promo) || promo <= 0 || promo >= price)) {
+      alert('O preço promocional deve ser inteiro, maior que zero e inferior ao preço normal.');
+      return;
+    }
+    if (!Number.isSafeInteger(stock) || stock < 0) {
+      alert('O stock deve ser um número inteiro igual ou superior a zero.');
+      return;
+    }
 
     const data = {
       name,
@@ -162,8 +183,8 @@
       status: document.getElementById('formStatus')?.value || 'rascunho',
       brand: document.getElementById('formBrand').value.trim(),
       price,
-      promo: parseInt(document.getElementById('formPromo').value) || null,
-      stock: parseInt(document.getElementById('formStock').value) || 0,
+      promo,
+      stock,
       warranty: document.getElementById('formWarranty').value.trim(),
       image: document.getElementById('formImage').value.trim() ||
              `assets/${(products.length % 100) + 1}.png`,
