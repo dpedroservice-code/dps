@@ -99,7 +99,7 @@
             <button class="btn-add-cart" onclick="addToCart('${escapeHtml(p.id)}',1)" ${!inStock ? 'disabled' : ''}>
               <i class="fas fa-cart-plus"></i> Adicionar
             </button>
-            <button class="btn-view" onclick="openDetail(${p.id})">
+            <button class="btn-view" onclick="openDetail('${escapeHtml(p.id)}')">
               <i class="fas fa-eye"></i>
             </button>
           </div>
