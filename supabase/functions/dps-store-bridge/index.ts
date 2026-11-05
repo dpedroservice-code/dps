@@ -228,10 +228,16 @@ Deno.serve(async (req: Request) => {
     if (action === "set-published") {
       const id = String(body.product_id || "");
       const published = body.is_published === true;
+      const { data: current, error: readError } = await admin.from("dps_store_products")
+        .select("id,price,stock_quantity,is_active").eq("company_id", companyId).eq("id", id).maybeSingle();
+      if (readError || !current || !current.is_active) return json(req, 404, { ok: false, error: "Produto não encontrado ou inativo." });
+      if (published && (Number(current.price) <= 0 || Number(current.stock_quantity) <= 0)) {
+        return json(req, 409, { ok: false, error: "Para publicar, o produto precisa de preço válido e stock superior a zero." });
+      }
       const { data, error } = await admin.from("dps_store_products").update({ is_published: published })
         .eq("company_id", companyId).eq("id", id).eq("is_active", true)
         .select("id,is_published").maybeSingle();
-      if (error || !data) return json(req, 404, { ok: false, error: "Produto não encontrado ou inativo." });
+      if (error || !data) return json(req, 404, { ok: false, error: "Não foi possível atualizar a publicação." });
       return json(req, 200, { ok: true, product: data });
     }
     if (action === "sync-status") {
