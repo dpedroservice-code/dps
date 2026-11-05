@@ -183,6 +183,10 @@
       description: document.getElementById('formDescription').value.trim(),
       updatedAt: new Date().toISOString(), createdAt: existing?.createdAt || new Date().toISOString()
     };
+    if (data.status === 'publicado' && (data.price <= 0 || data.stock <= 0)) {
+      alert('Para publicar, o produto precisa de preço válido e stock superior a zero.');
+      return;
+    }
     try {
       const saved = window.DPS_CLOUD_STORE ? await window.DPS_CLOUD_STORE.saveManual(data) : data;
       const idx = products.findIndex(p => String(p.id) === String(data.id));
@@ -198,6 +202,10 @@
     const p = products.find(x => String(x.id) === String(id));
     if (!p) return;
     const publish = p.status !== 'publicado';
+    if (publish && (Number(p.price) <= 0 || Number(p.stock) <= 0)) {
+      alert('Só pode publicar produtos com preço válido e stock superior a zero.');
+      return;
+    }
     try {
       if (window.DPS_CLOUD_STORE) await window.DPS_CLOUD_STORE.setPublished(p.id, publish);
       p.status = publish ? 'publicado' : 'rascunho';
