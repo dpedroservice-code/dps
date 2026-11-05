@@ -19,4 +19,7 @@
   <url><loc>https://dpedrosolucoes.shop/comunidade.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://dpedrosolucoes.shop/contactos.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://dpedrosolucoes.shop/admin.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dpedrosolucoes.shop/notificacoes.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://dpedrosolucoes.shop/central-ajuda.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://dpedrosolucoes.shop/suporte-tecnico.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
 </urlset>

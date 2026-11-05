@@ -5,10 +5,10 @@ const footer=document.querySelector('[data-site-footer]');
 const navItems=[
  ['Início','index.html','home'],
  ['Empresa',null,'building',[['Quem somos','quem-somos.html'],['Mercados verticais','mercados-verticais.html'],['Sobre e ajuda','ajuda.html'],['Recrutamento','recrutamento.html'],['Indique e ganhe','indicar.html'],['Recursos','recursos-indisponiveis.html'],['Atualizações','atualizacoes.html'],['Manutenção','manutencao.html']]],
- ['Soluções','solucoes.html','shield',[['Câmaras CFTV','solucoes.html#cctv'],['Alarmes','solucoes.html#alarmes'],['Controlo de acesso','solucoes.html#controlo-acesso'],['Energia solar','solucoes.html#energia-solar'],['Cerca elétrica','solucoes.html#cerca-eletrica'],['Gravadores','solucoes.html#gravadores'],['Hardware e redes','solucoes.html#hardware']]],
- ['Produtos','produtos.html','box',[['Catálogo geral','catalogo.html'],['Loja virtual','loja-virtual.html'],['Aplicativos','produtos.html#aplicativos'],['Manuais','produtos.html#manuais'],['Templates','produtos.html#templates'],['Cardápios digitais','produtos.html#cardapio']]],
- ['Tecnologia','tecnologia.html','microchip',[['Assistente IA','tecnologia.html#ia'],['API e ERP','tecnologia.html#api-erp'],['Análise e relatórios','tecnologia.html#analise'],['SEO','tecnologia.html#seo'],['Domínio e alojamento','tecnologia.html#dominio'],['Comunicação digital','tecnologia.html#comunicacao']]],
- ['Comunidade','comunidade.html','users',[['Cursos','comunidade.html#cursos'],['Webinars','comunidade.html#webinars'],['Notificações','comunidade.html#notificacoes'],['Atualizações','comunidade.html#atualizacoes'],['Central de ajuda','comunidade.html#ajuda'],['Suporte técnico','comunidade.html#suporte']]],
+ ['Soluções','solucoes.html','shield',[['Câmaras CFTV','cctv.html'],['Alarmes','alarmes.html'],['Controlo de acesso','controlo-acesso.html'],['Energia solar','energia-solar.html'],['Cerca elétrica','cerca-eletrica.html'],['Gravadores','gravadores.html'],['Hardware e redes','hardware-redes.html']]],
+ ['Produtos','produtos.html','box',[['Catálogo geral','catalogo.html'],['Loja virtual','loja-virtual.html'],['Aplicativos','aplicativos.html'],['Manuais','manuais.html'],['Templates','templates.html'],['Cardápios digitais','cardapios-digitais.html']]],
+ ['Tecnologia','tecnologia.html','microchip',[['Assistente IA','assistente-ia.html'],['API e ERP','api-erp.html'],['Análise e relatórios','analise-relatorios.html'],['SEO','seo.html'],['Domínio e alojamento','dominio-alojamento.html'],['Comunicação digital','comunicacao-digital.html']]],
+ ['Comunidade','comunidade.html','users',[['Cursos','cursos.html'],['Webinars','webinars.html'],['Notificações','notificacoes.html'],['Atualizações','comunidade.html#atualizacoes'],['Central de ajuda','central-ajuda.html'],['Suporte técnico','suporte-tecnico.html']]],
  ['Contactos','contactos.html','envelope'],
  ['Admin','admin.html','lock'],
  ['KanawaSoft ERP','index.html#erp','desktop']
