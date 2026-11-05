@@ -70,10 +70,11 @@
     <!-- TAB PRODUTOS -->
     <div id="tabProducts" class="admin-content">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
-            <h2><i class="fas fa-box"></i> Produtos (100)</h2>
+            <h2><i class="fas fa-box"></i> Produtos</h2>
             <button class="btn btn-success" onclick="ADMIN.openForm()"><i class="fas fa-plus"></i> Novo Produto</button>
         </div>
 
+        <div class="note-panel" role="note" style="margin:1rem 0;padding:1rem;border-left:4px solid #f59e0b;background:#fffbeb;color:#78350f;border-radius:.6rem;">Atenção: neste momento, o catálogo é guardado apenas neste navegador (localStorage). As alterações não são partilhadas entre dispositivos nem sincronizadas com Supabase. Confirme preços, stock e garantias antes de publicar produtos.</div>
         <div class="stats-grid">
             <div class="stat-box"><div class="label">Total</div><div class="value blue" id="statTotal">0</div></div>
             <div class="stat-box"><div class="label">Publicados</div><div class="value green" id="statPublicado">0</div></div>
