@@ -13,6 +13,15 @@
   function escapeHtml(s) {
     const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML;
   }
+  function safeImageUrl(value) {
+    const src = String(value || '').trim();
+    return /^(https?:\\/\\/|\\/|\\.\\.?\\/|assets\\/)/i.test(src) ? src : 'assets/1.png';
+  }
+  function addToCart(productId, qty) {
+    const product = products.find(p => String(p.id) === String(productId));
+    if (!product || Number(product.stock) <= 0) { alert('Produto indisponível ou sem stock.'); return; }
+    if (window.DPEDRO_CART?.add) window.DPEDRO_CART.add(product, qty);
+  }
 
   // ============ NAVEGAÇÃO SPA ============
   function navigate(page) {
@@ -68,8 +77,8 @@
     const catName = window.DPEDRO_DB.categories.find(c => c.id === p.category)?.name || p.category;
     return `
       <div class="product-card">
-        <div class="product-image" onclick="openDetail(${p.id})">
-          <img src="${p.image}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.src='assets/1.png'">
+        <div class="product-image" onclick="openDetail('${escapeHtml(p.id)}')">
+          <img src="${escapeHtml(safeImageUrl(p.image))}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.src='assets/1.png'">
           ${hasPromo ? '<span class="product-badge promo">PROMO</span>' : ''}
           ${!inStock ? '<span class="product-badge out">ESGOTADO</span>' : ''}
         </div>
@@ -86,7 +95,7 @@
             ${inStock ? `Stock: ${p.stock}` : 'Esgotado'}
           </div>
           <div class="product-actions">
-            <button class="btn-add-cart" onclick="addToCart(${p.id},1)" ${!inStock ? 'disabled' : ''}>
+            <button class="btn-add-cart" onclick="addToCart('${escapeHtml(p.id)}',1)" ${!inStock ? 'disabled' : ''}>
               <i class="fas fa-cart-plus"></i> Adicionar
             </button>
             <button class="btn-view" onclick="openDetail(${p.id})">
@@ -106,7 +115,7 @@
     let filtered = products.filter(p => {
       const isPublished = p.status === 'publicado';
       const matchCat = currentCategory === 'all' || p.category === currentCategory;
-      const matchSearch = p.name.toLowerCase().includes(search) || (p.specs || '').toLowerCase().includes(search);
+      const matchSearch = String(p.name || '').toLowerCase().includes(search) || (p.specs || '').toLowerCase().includes(search);
       const matchOffer = !showOnlyOffers || (p.promo && p.promo < p.price);
       return isPublished && matchCat && matchSearch && matchOffer;
     });
@@ -122,7 +131,7 @@
 
   // ============ DETALHE ============
   function openDetail(id) {
-    const p = products.find(x => x.id === id);
+    const p = products.find(x => String(x.id) === String(id));
     if (!p) return;
     currentDetailProduct = p;
     currentQty = 1;
@@ -184,13 +193,23 @@
     addToCart(currentDetailProduct.id, currentQty);
     closeProduct();
   }
-  function buyDetailNow() {
+  async function buyDetailNow() {
     if (!currentDetailProduct) return;
     const p = currentDetailProduct;
     const price = p.promo || p.price;
-    const msg = `*PEDIDO - D.PEDRO*\n\n*Produto:* ${p.name}\n*Qtd:* ${currentQty}\n*Preço:* ${window.DPEDRO_DB.fmtKz(price)}\n*Total:* ${window.DPEDRO_DB.fmtKz(price * currentQty)}\n\nAguardo confirmação.`;
-    if (typeof gtag === 'function') gtag('event', 'purchase', { value: price * currentQty, currency: 'AOA' });
-    window.open(`https://wa.me/244946299834?text=${encodeURIComponent(msg)}`, '_blank');
+    let orderNumber = '';
+    try {
+      const order = await window.DPS_CLOUD_STORE?.createOrder('WhatsApp', [{ id: p.id, qty: currentQty }]);
+      orderNumber = order?.order_number || '';
+    } catch (error) {
+      if (error.status && error.status >= 400 && error.status < 500) { alert(error.message); return; }
+      window.DPS_CLOUD_STORE?.queueOrder('WhatsApp', [{ id: p.id, qty: currentQty }]);
+    }
+    const total = price * currentQty;
+    const reference = orderNumber ? '*Referência:* ' + orderNumber : '*Referência:* sincronização pendente';
+    const msg = '*PEDIDO - D.PEDRO*\\n' + reference + '\\n\\n*Produto:* ' + p.name + '\\n*Qtd:* ' + currentQty + '\\n*Preço apresentado:* ' + window.DPEDRO_DB.fmtKz(price) + '\\n*Total apresentado:* ' + window.DPEDRO_DB.fmtKz(total) + '\\n\\nAguardo confirmação de disponibilidade e pagamento.';
+    if (typeof gtag === 'function') gtag('event', 'purchase', { value: total, currency: 'AOA' });
+    window.open('https://wa.me/244946299834?text=' + encodeURIComponent(msg), '_blank');
   }
   function closeProduct() {
     document.getElementById('productModal').classList.remove('active');
@@ -200,6 +219,7 @@
   // ============ INIT ============
   document.addEventListener('DOMContentLoaded', () => {
     products = window.DPEDRO_DB.loadProducts();
+    window.addEventListener('dpedro:products-updated', event => { products = Array.isArray(event.detail) ? event.detail : window.DPEDRO_DB.loadProducts(); renderFeatured(); renderCategories(); filterProducts(); });
     if (localStorage.getItem('dpedro_theme') === 'dark') document.body.classList.add('dark');
     renderFeatured();
     renderCategories();
@@ -239,5 +259,6 @@
   window.changeDetailQty = changeDetailQty;
   window.addDetailToCart = addDetailToCart;
   window.buyDetailNow = buyDetailNow;
+  window.addToCart = addToCart;
   window.toggleTheme = toggleTheme;
 })();
