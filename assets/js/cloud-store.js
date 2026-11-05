@@ -96,35 +96,7 @@
     if (!companyId) await initializeAdmin();
     const cleanPurpose = String(purpose || '').trim();
     if (cleanPurpose.length < 5) throw new Error('Descreva a finalidade da ligação à loja.');
-    const previous = await apiStatus().catch(() => null);
-    const previousKeyId = previous?.integration?.api_key_id || null;
-    const apiName = 'D.PEDRO SOLUÇÕES e-Commerce';
-    const origins = ['https://dpedrosolucoes.shop','https://www.dpedrosolucoes.shop','https://dpedrosolucoeslda.netlify.app'];
-    const { data: issued, error: issueError } = await window.DPAuth.client.functions.invoke('ks-store-api', {
-      body: { action: 'create-key', company_id: companyId, name: apiName, purpose: cleanPurpose, allowed_origins: origins }
-    });
-    if (issueError || !issued?.success || !issued?.secret || !issued?.key?.id) {
-      throw new Error(issued?.error || issueError?.message || 'O KanawaSoft não conseguiu emitir uma chave de catálogo.');
-    }
-    const { data: saved, error: saveError } = await window.DPAuth.client.functions.invoke('dps-store-bridge', {
-      body: {
-        action: 'configure-api', company_id: companyId, api_name: apiName,
-        purpose: cleanPurpose, api_key_id: issued.key.id,
-        api_key_prefix: issued.key.key_prefix, api_secret: issued.secret
-      }
-    });
-    if (saveError || !saved?.ok) {
-      await window.DPAuth.client.functions.invoke('ks-store-api', {
-        body: { action: 'revoke-key', company_id: companyId, key_id: issued.key.id }
-      }).catch(() => {});
-      throw new Error(saved?.error || saveError?.message || 'A chave foi emitida, mas não ficou guardada no cofre seguro.');
-    }
-    if (previousKeyId && previousKeyId !== issued.key.id) {
-      await window.DPAuth.client.functions.invoke('ks-store-api', {
-        body: { action: 'revoke-key', company_id: companyId, key_id: previousKeyId }
-      }).catch(() => {});
-    }
-    return saved;
+    return await invoke('connect-api', { purpose: cleanPurpose });
   }
   async function apiStatus() {
     if (!companyId) await initializeAdmin();
