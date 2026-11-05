@@ -86,6 +86,8 @@
     if (!companyId) await initializeAdmin();
     const cleanPurpose = String(purpose || '').trim();
     if (cleanPurpose.length < 5) throw new Error('Descreva a finalidade da ligação à loja.');
+    const previous = await apiStatus().catch(() => null);
+    const previousKeyId = previous?.integration?.api_key_id || null;
     const apiName = 'D.PEDRO SOLUÇÕES e-Commerce';
     const origins = ['https://dpedrosolucoes.shop','https://www.dpedrosolucoes.shop','https://dpedrosolucoeslda.netlify.app'];
     const { data: issued, error: issueError } = await window.DPAuth.client.functions.invoke('ks-store-api', {
@@ -106,6 +108,11 @@
         body: { action: 'revoke-key', company_id: companyId, key_id: issued.key.id }
       }).catch(() => {});
       throw new Error(saved?.error || saveError?.message || 'A chave foi emitida, mas não ficou guardada no cofre seguro.');
+    }
+    if (previousKeyId && previousKeyId !== issued.key.id) {
+      await window.DPAuth.client.functions.invoke('ks-store-api', {
+        body: { action: 'revoke-key', company_id: companyId, key_id: previousKeyId }
+      }).catch(() => {});
     }
     return saved;
   }
