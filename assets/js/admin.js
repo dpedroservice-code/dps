@@ -271,7 +271,7 @@
       window.DPS_CLOUD_STORE.apiStatus().then(result => {
         const integration = result.integration;
         if (status) status.textContent = result.connected && integration
-          ? 'API ligada · ' + integration.api_name + ' · Chave ' + integration.api_key_prefix + ' · Última consulta: ' + (integration.last_connected_at ? new Date(integration.last_connected_at).toLocaleString('pt-AO') : 'ainda não consultada') + '. Segredo protegido no Supabase Vault.'
+          ? 'API ligada · ' + integration.api_name + ' · Chave ' + integration.api_key_prefix + ' · Endpoint: ' + integration.api_url + ' · Finalidade: ' + integration.purpose + ' · Última consulta: ' + (integration.last_connected_at ? new Date(integration.last_connected_at).toLocaleString('pt-AO') : 'ainda não consultada') + '. Segredo protegido no Supabase Vault.'
           : 'API ainda não ligada. Emita a chave de leitura para começar.';
       }).catch(error => { if (status) status.textContent = 'Estado da API indisponível: ' + error.message; });
     }
@@ -312,12 +312,12 @@
     const alerts = [];
     if (!items.length) alerts.push('O catálogo ainda não contém produtos.');
     if (lowStock.length) alerts.push(lowStock.length + ' produto(s) com stock igual ou inferior a 5 unidades.');
-    if (!orders.length) alerts.push('Ainda não existem pedidos locais registados.');
+    if (!orders.length) alerts.push('Ainda não existem pedidos registados no Supabase.');
     if (!window.DPAuth) alerts.push('Módulo de autenticação não foi carregado; confirme a configuração antes de disponibilizar o painel.');
     const alertBox = document.getElementById('overviewAlerts');
     if (alertBox) alertBox.innerHTML = alerts.length
       ? alerts.map(message => '<div class="admin-list-item"><i class="fas fa-info-circle"></i><span>' + escapeHtml(message) + '</span></div>').join('')
-      : '<div class="admin-list-item"><i class="fas fa-check-circle"></i><span>Sem alertas operacionais identificados nos dados locais.</span></div>';
+      : '<div class="admin-list-item"><i class="fas fa-check-circle"></i><span>Sem alertas operacionais identificados nos dados sincronizados.</span></div>';
 
     const activity = items.filter(p => p.updatedAt || p.createdAt)
       .sort((a,b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))
