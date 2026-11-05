@@ -12,6 +12,11 @@
   function fmtKz(n) {
     return 'Kz ' + Number(n).toLocaleString('pt-AO');
   }
+  function safeImageUrl(value) {
+    const src = String(value || '').trim();
+    if (src.startsWith('https://') || src.startsWith('http://') || src.startsWith('/') || src.startsWith('./') || src.startsWith('../') || src.startsWith('assets/')) return src;
+    return 'assets/1.png';
+  }
   function escapeHtml(s) {
     const d = document.createElement('div');
     d.textContent = s || '';
@@ -79,7 +84,7 @@
     } else {
       box.innerHTML = items.map(i => `
         <div class="cart-item">
-          <img src="${i.image}" alt="${escapeHtml(i.name)}" onerror="this.src='https://placehold.co/60x60/2563eb/white?text=P'">
+          <img src="${escapeHtml(safeImageUrl(i.image))}" alt="${escapeHtml(i.name)}" onerror="this.src='https://placehold.co/60x60/2563eb/white?text=P'">
           <div class="cart-item-info">
             <h4>${escapeHtml(i.name)}</h4>
             <div class="price">${fmtKz(i.price)}</div>
