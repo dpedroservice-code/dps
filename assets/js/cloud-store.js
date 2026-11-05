@@ -29,10 +29,20 @@
   }
   async function publicProducts() {
     if (!API) return [];
-    const response = await fetch(API + '?action=public-products&store=' + encodeURIComponent(STORE), { headers: { Accept: 'application/json' } });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok || result.ok !== true) throw new Error(result.error || 'Não foi possível carregar o catálogo publicado.');
-    return cacheProducts(result.products || []);
+    try {
+      const response = await fetch(API + '?action=public-products&store=' + encodeURIComponent(STORE), { headers: { Accept: 'application/json' } });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || result.ok !== true) throw new Error(result.error || 'Não foi possível carregar o catálogo publicado.');
+      const products = (result.products || []).filter(row => row.is_active !== false).map(localProduct);
+      localStorage.setItem('dpedro_store_public_cache', JSON.stringify(products));
+      window.dispatchEvent(new CustomEvent('dpedro:products-updated', { detail: products }));
+      return products;
+    } catch (error) {
+      let cached = [];
+      try { cached = JSON.parse(localStorage.getItem('dpedro_store_public_cache') || '[]'); } catch (_) {}
+      window.dispatchEvent(new CustomEvent('dpedro:products-updated', { detail: cached }));
+      return cached;
+    }
   }
   async function invoke(action, payload = {}) {
     if (!window.DPAuth?.client) throw new Error('Sessão Supabase indisponível.');
