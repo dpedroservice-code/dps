@@ -15,8 +15,8 @@ const navItems=[
 ];
 function item([label,url,icon,children]){
  if(!children)return '<li><a href="'+url+'">'+label+'</a></li>';
- const parent=url?'<a href="'+url+'">'+label+'</a>':'<summary>'+label+' ▾</summary>';
- return '<li><details><summary>'+label+' ▾</summary><div class="site-submenu">'+children.map(c=>'<a href="'+c[1]+'">'+c[0]+'</a>').join('')+'</div></details></li>';
+ const links=(url?[[label+' — visão geral',url],...children]:children).map(c=>'<a href="'+c[1]+'">'+c[0]+'</a>').join('');
+ return '<li><details><summary>'+label+' ▾</summary><div class="site-submenu">'+links+'</div></details></li>';
 }
 if(header){
  header.className='site-header';
