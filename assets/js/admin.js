@@ -14,6 +14,11 @@
   function escapeHtml(s) {
     const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML;
   }
+  function safeImageSrc(value) {
+    const src = String(value || '').trim();
+    if (src.startsWith('https://') || src.startsWith('http://') || src.startsWith('/') || src.startsWith('./') || src.startsWith('../')) return src;
+    return 'assets/1.png';
+  }
   function showToast(msg) {
     const t = document.getElementById('toast');
     if (!t) return;
@@ -79,12 +84,12 @@
 
     tbody.innerHTML = list.map(p => `
       <tr>
-        <td><img src="${p.image}" onerror="this.src='https://placehold.co/44x44/2563eb/white?text=P'" style="width:44px;height:44px;object-fit:cover;border-radius:6px;"></td>
+        <td><img src="${escapeHtml(safeImageSrc(p.image))}" loading="lazy" alt="Imagem do produto" onerror="this.src='https://placehold.co/44x44/2563eb/white?text=P'" style="width:44px;height:44px;object-fit:cover;border-radius:6px;"></td>
         <td>
           <strong>${escapeHtml(p.name)}</strong>
           <div style="font-size:.75rem;color:var(--text-muted)">${escapeHtml(p.brand || '—')}</div>
         </td>
-        <td>${window.DPEDRO_DB.categories.find(c => c.id === p.category)?.name || p.category}</td>
+        <td>${escapeHtml(window.DPEDRO_DB.categories.find(c => c.id === p.category)?.name || p.category || '—')}</td>
         <td>${p.promo ? '<span style="color:var(--warning);font-weight:700">' + window.DPEDRO_DB.fmtKz(p.promo) + '</span>' : window.DPEDRO_DB.fmtKz(p.price)}</td>
         <td>${p.stock}</td>
         <td>${badgeStatus(p.status)}</td>
