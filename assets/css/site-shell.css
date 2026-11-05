@@ -20,3 +20,11 @@
 .site-footer-bottom{max-width:1180px;margin:1.5rem auto 0;padding-top:1rem;border-top:1px solid #334155;color:#94a3b8;font-size:.82rem}
 @media(max-width:980px){.site-nav{flex-wrap:wrap}.site-nav-toggle{display:inline-grid;place-items:center;margin-left:auto}.site-menu{display:none;flex:1 0 100%;align-items:stretch;flex-direction:column;padding:.5rem 0}.site-menu.is-open{display:flex}.site-menu>li{width:100%}.site-menu a,.site-menu summary{width:100%;white-space:normal;border-radius:10px}.site-menu details .site-submenu{position:static;box-shadow:none;border:0;border-left:2px solid #dbeafe;border-radius:0;margin-left:.8rem;padding:.25rem .5rem}.site-menu details .site-submenu a{font-size:.85rem}.site-topbar{font-size:.75rem}}
 @media(prefers-reduced-motion:reduce){.site-header *,.site-footer *{scroll-behavior:auto!important;transition:none!important}}
+
+/* Formulários das páginas de serviço */
+.info-card label{display:block;margin:.85rem 0 .35rem;font-weight:650;color:var(--text)}
+.info-card input:not([type=checkbox]),.info-card select,.info-card textarea{display:block;width:100%;max-width:100%;padding:.75rem .85rem;border:1px solid var(--border);border-radius:.65rem;background:var(--card);color:var(--text);font:inherit}
+.info-card textarea{resize:vertical;min-height:5rem}
+.info-card input:focus,.info-card select:focus,.info-card textarea:focus{outline:3px solid rgba(37,99,235,.18);border-color:var(--primary)}
+.info-card input[type=checkbox]{width:1.1rem;height:1.1rem;vertical-align:middle;margin-right:.35rem}
+.info-card button{margin-top:1rem}
