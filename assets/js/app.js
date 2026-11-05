@@ -15,7 +15,8 @@
   }
   function safeImageUrl(value) {
     const src = String(value || '').trim();
-    return /^(https?:\\/\\/|\\/|\\.\\.?\\/|assets\\/)/i.test(src) ? src : 'assets/1.png';
+    if (src.startsWith('https://') || src.startsWith('http://') || src.startsWith('/') || src.startsWith('./') || src.startsWith('../') || src.startsWith('assets/')) return src;
+    return 'assets/1.png';
   }
   function addToCart(productId, qty) {
     const product = products.find(p => String(p.id) === String(productId));
@@ -84,7 +85,7 @@
         </div>
         <div class="product-info">
           <div class="product-cat">${catName}</div>
-          <h3 class="product-name" onclick="openDetail(${p.id})">${escapeHtml(p.name)}</h3>
+          <h3 class="product-name" onclick="openDetail('${escapeHtml(p.id)}')">${escapeHtml(p.name)}</h3>
           <p class="product-specs">${escapeHtml(p.specs || '')}</p>
           <div class="product-price">
             <span class="current">${window.DPEDRO_DB.fmtKz(price)}</span>
@@ -196,20 +197,26 @@
   async function buyDetailNow() {
     if (!currentDetailProduct) return;
     const p = currentDetailProduct;
+    const popup = window.open('about:blank', '_blank');
     const price = p.promo || p.price;
     let orderNumber = '';
     try {
       const order = await window.DPS_CLOUD_STORE?.createOrder('WhatsApp', [{ id: p.id, qty: currentQty }]);
       orderNumber = order?.order_number || '';
     } catch (error) {
-      if (error.status && error.status >= 400 && error.status < 500) { alert(error.message); return; }
+      if (error.status && error.status >= 400 && error.status < 500) {
+        if (popup) popup.close();
+        alert(error.message);
+        return;
+      }
       window.DPS_CLOUD_STORE?.queueOrder('WhatsApp', [{ id: p.id, qty: currentQty }]);
     }
     const total = price * currentQty;
     const reference = orderNumber ? '*Referência:* ' + orderNumber : '*Referência:* sincronização pendente';
     const msg = '*PEDIDO - D.PEDRO*\\n' + reference + '\\n\\n*Produto:* ' + p.name + '\\n*Qtd:* ' + currentQty + '\\n*Preço apresentado:* ' + window.DPEDRO_DB.fmtKz(price) + '\\n*Total apresentado:* ' + window.DPEDRO_DB.fmtKz(total) + '\\n\\nAguardo confirmação de disponibilidade e pagamento.';
     if (typeof gtag === 'function') gtag('event', 'purchase', { value: total, currency: 'AOA' });
-    window.open('https://wa.me/244946299834?text=' + encodeURIComponent(msg), '_blank');
+    const url = 'https://wa.me/244946299834?text=' + encodeURIComponent(msg);
+    if (popup && !popup.closed) popup.location.href = url; else window.location.href = url;
   }
   function closeProduct() {
     document.getElementById('productModal').classList.remove('active');
