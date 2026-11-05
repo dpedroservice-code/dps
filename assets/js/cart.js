@@ -84,12 +84,12 @@
             <h4>${escapeHtml(i.name)}</h4>
             <div class="price">${fmtKz(i.price)}</div>
             <div class="cart-item-qty">
-              <button onclick="DPEDRO_CART.changeQty(${i.id},-1)">−</button>
+              <button onclick="DPEDRO_CART.changeQty(${JSON.stringify(String(i.id))},-1)">−</button>
               <span>${i.qty}</span>
-              <button onclick="DPEDRO_CART.changeQty(${i.id},1)">+</button>
+              <button onclick="DPEDRO_CART.changeQty(${JSON.stringify(String(i.id))},1)">+</button>
             </div>
           </div>
-          <button class="cart-item-remove" onclick="DPEDRO_CART.remove(${i.id})"><i class="fas fa-trash"></i></button>
+          <button class="cart-item-remove" onclick="DPEDRO_CART.remove(${JSON.stringify(String(i.id))})"><i class="fas fa-trash"></i></button>
         </div>
       `).join('');
     }
