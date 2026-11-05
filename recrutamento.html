@@ -1,26 +1,7 @@
-<main class="container">
-    <div class="page-hero">
-        <div class="page-hero-content">
-            <div class="breadcrumb"><a href="index.html">Início</a><span>/</span><a href="empresa.html">Empresa</a><span>/</span>Recrutamento</div>
-            <div class="badge"><i class="fas fa-user-plus"></i> Carreiras</div>
-            <h1>Recrutamento</h1>
-            <p>Junte-se à equipa D.PEDRO SOLUÇÕES e faça parte do futuro da tecnologia em Angola.</p>
-        </div>
-    </div>
-    <h2 class="section-title"><i class="fas fa-briefcase"></i> Vagas Disponíveis</h2>
-    <div class="card-grid">
-        <div class="info-card"><div class="info-card-icon"><i class="fas fa-video"></i></div><h3>Técnico de CFTV</h3><p>Instalação e manutenção de sistemas de videovigilância. Experiência mínima de 2 anos.</p></div>
-        <div class="info-card"><div class="info-card-icon"><i class="fas fa-solar-panel"></i></div><h3>Técnico de Energia Solar</h3><p>Instalação de sistemas fotovoltaicos e off grid. Certificação valorizada.</p></div>
-        <div class="info-card"><div class="info-card-icon"><i class="fas fa-network-wired"></i></div><h3>Técnico de Redes</h3><p>Configuração de redes estruturadas, switches e routers.</p></div>
-        <div class="info-card"><div class="info-card-icon"><i class="fas fa-laptop-code"></i></div><h3>Desenvolvedor Web</h3><p>Desenvolvimento frontend e backend. Conhecimentos em HTML, CSS, JS, PHP.</p></div>
-    </div>
-    <h2 class="section-title"><i class="fas fa-paper-plane"></i> Candidate-se</h2>
-    <div style="background:rgba(255,255,255,0.85); border-radius:1.5rem; padding:2rem; max-width:700px;">
-        <form onsubmit="event.preventDefault(); alert('Candidatura enviada com sucesso!');">
-            <div class="form-group"><label><i class="fas fa-user"></i> Nome *</label><div class="input-group"><i class="fas fa-user"></i><input type="text" required placeholder="Seu nome"></div></div>
-            <div class="form-group"><label><i class="fas fa-envelope"></i> Email *</label><div class="input-group"><i class="fas fa-envelope"></i><input type="email" required placeholder="seu@email.com"></div></div>
-            <div class="form-group"><label><i class="fas fa-briefcase"></i> Vaga *</label><div class="input-group"><i class="fas fa-briefcase"></i><select required><option value="">Selecione...</option><option>Técnico de CFTV</option><option>Técnico de Energia Solar</option><option>Técnico de Redes</option><option>Desenvolvedor Web</option></select></div></div>
-            <button type="submit" class="btn-primary"><i class="fas fa-paper-plane"></i> Enviar candidatura</button>
-        </form>
-    </div>
-</main>
+<!doctype html>
+<html lang="pt-AO"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#1e3a8a"><meta name="description" content="Informações sobre candidaturas e oportunidades profissionais na D.PEDRO SOLUÇÕES."><title>Recrutamento | D.PEDRO SOLUÇÕES</title><link rel="icon" href="assets/1.png"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="assets/css/style.css"><link rel="stylesheet" href="assets/css/site-shell.css"><script defer src="assets/js/site-shell.js"></script></head><body><header data-site-header></header><main class="container" style="padding-top:1rem;padding-bottom:2rem">
+<nav class="breadcrumb"><a href="index.html">Início</a> / <a href="empresa.html">Empresa</a> / Recrutamento</nav><section class="page-hero"><div class="page-hero-content"><span class="badge">Carreiras</span><h1>Recrutamento</h1><p>Esta página recebe manifestações de interesse. A existência de uma vaga, os requisitos e o processo de seleção devem ser confirmados pela empresa.</p></div></section>
+<div class="note-panel">Não há vagas abertas confirmadas publicadas nesta página neste momento. Podes enviar uma apresentação espontânea; isso não significa que exista uma vaga nem garante resposta ou contratação.</div>
+<h2 class="section-title">Áreas de interesse</h2><div class="card-grid"><article class="info-card"><h3>Instalação e manutenção</h3><p>CFTV, eletricidade, energia solar e assistência técnica.</p></article><article class="info-card"><h3>Informática e redes</h3><p>Suporte a computadores, redes locais e equipamentos.</p></article><article class="info-card"><h3>Comercial e operações</h3><p>Atendimento, vendas, organização de stock e apoio administrativo.</p></article><article class="info-card"><h3>Design e comunicação</h3><p>Design gráfico, conteúdos digitais e apoio à comunicação.</p></article></div>
+<h2 class="section-title">Manifestar interesse</h2><form id="career-form" class="info-card" style="max-width:720px"><label for="career-name">Nome completo</label><input id="career-name" name="name" required minlength="2" autocomplete="name"><label for="career-phone">Telefone</label><input id="career-phone" name="phone" required autocomplete="tel"><label for="career-email">Email</label><input id="career-email" name="email" type="email" autocomplete="email"><label for="career-area">Área de interesse</label><select id="career-area" name="area" required><option value="">Selecione</option><option>Instalação e manutenção</option><option>Informática e redes</option><option>Comercial e operações</option><option>Design e comunicação</option><option>Outra</option></select><label for="career-note">Experiência e apresentação</label><textarea id="career-note" name="note" rows="4" placeholder="Resuma a sua experiência e disponibilidade"></textarea><button class="btn btn-primary" type="submit">Preparar candidatura no WhatsApp</button><p id="career-status" role="status" aria-live="polite">O botão abre uma mensagem preenchida para rever e enviar. Nenhum dado é submetido automaticamente.</p></form>
+<script>document.getElementById('career-form').addEventListener('submit',function(e){e.preventDefault();if(!this.reportValidity())return;const d=new FormData(this);const msg=['CANDIDATURA ESPONTÂNEA — D.PEDRO SOLUÇÕES','Nome: '+d.get('name'),'Telefone: '+d.get('phone'),'Email: '+(d.get('email')||'Não indicado'),'Área: '+d.get('area'),'Apresentação: '+(d.get('note')||'Não indicada')].join('\n');window.open('https://wa.me/244946299834?text='+encodeURIComponent(msg),'_blank','noopener');document.getElementById('career-status').textContent='Mensagem preparada. Confirme os dados e toque em Enviar no WhatsApp.';});</script></main><footer data-site-footer></footer><a href="https://wa.me/244946299834" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar pelo WhatsApp"><i class="fab fa-whatsapp"></i></a></body></html>
