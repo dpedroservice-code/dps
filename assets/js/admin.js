@@ -381,7 +381,7 @@
     } catch (error) {
       if (status) status.textContent = 'Sincronização não concluída: ' + error.message;
       showToast('Falha na sincronização: ' + error.message);
-      throw error;
+      return null;
     }
   }
 
