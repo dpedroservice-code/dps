@@ -13,73 +13,21 @@
     <link rel="manifest" href="manifest.webmanifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/site-shell.css">
+    <script defer src="assets/js/site-shell.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZPQXHR09R4"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ZPQXHR09R4');</script>
 </head>
 <body>
 
-<!-- TOP BAR -->
-<div class="top-bar">
-    <div class="contact-info">
-        <span><i class="fas fa-phone-alt"></i> 946 299 834 | 959 777 301</span>
-        <span><i class="fas fa-map-marker-alt"></i> Viana, Vila Flor</span>
-        <span><i class="fas fa-envelope"></i> dpedroservice@gmail.com</span>
-    </div>
-    <div class="social-links">
-        <a href="https://wa.me/244946299834" target="_blank"><i class="fab fa-whatsapp"></i></a>
-        <a href="mailto:dpedroservice@gmail.com"><i class="fas fa-envelope"></i></a>
-        <a href="https://www.linkedin.com/in/daniel-pedro-bb03872b5/"><i class="fab fa-linkedin"></i></a>
-        <a href="https://www.instagram.com/dpedro_solucoes/"><i class="fab fa-instagram"></i></a>
-        <a onclick="toggleTheme()" style="cursor:pointer" title="Tema"><i class="fas fa-moon"></i></a>
-    </div>
+<!-- Cabeçalho partilhado com as restantes páginas -->
+<header data-site-header></header>
+<div class="home-cart-shortcut" style="max-width:1440px;margin:.5rem auto;padding:0 5%;text-align:right">
+  <button type="button" onclick="openCart()" aria-label="Abrir carrinho" style="border:0;border-radius:2rem;background:var(--primary);color:#fff;padding:.55rem 1rem;cursor:pointer">
+    <i class="fas fa-shopping-cart" aria-hidden="true"></i> Carrinho <span class="cart-count">0</span>
+  </button>
 </div>
 
-<!-- NAV -->
-<nav aria-label="Navegação principal">
-    <a href="index.html" class="logo"><img src="assets/1.png" alt="D.PEDRO SOLUÇÕES"><div class="logo-text">D.PEDRO SOLUÇÕES <small>COMÉRCIO E PRESTAÇÃO DE SERVIÇOS</small></div></a>
-    <ul class="nav-menu">
-        <li><a href="index.html" class="nav-link active"><i class="fas fa-home"></i> Início</a></li>
-        <li><a href="empresa.html"><i class="fas fa-building"></i> Empresa <span class="arrow"><i class="fas fa-chevron-down"></i></span></a>
-            <div class="mega-menu">
-                <div class="mega-col"><div class="mega-col-title">Institucional</div><a href="quem-somos.html">Quem somos</a><a href="mercados-verticais.html">Mercados verticais</a><a href="ajuda.html">Sobre e ajuda</a></div>
-                <div class="mega-col"><div class="mega-col-title">Contactos e oportunidades</div><a href="contactos.html">Contactos</a><a href="recrutamento.html">Recrutamento</a><a href="indicar.html">Indique e ganhe</a></div>
-                <div class="mega-col"><div class="mega-col-title">Recursos</div><a href="recursos-indisponiveis.html">Recursos</a><a href="atualizacoes.html">Atualizações</a><a href="manutencao.html">Manutenção</a></div>
-            </div>
-        </li>
-        <li><a href="solucoes.html"><i class="fas fa-cube"></i> Soluções <span class="arrow"><i class="fas fa-chevron-down"></i></span></a>
-            <div class="mega-menu">
-                <div class="mega-col"><div class="mega-col-title">Segurança</div><a href="solucoes.html#cctv">Câmaras CFTV</a><a href="solucoes.html#alarmes">Alarmes</a><a href="solucoes.html#controlo-acesso">Controlo de acesso</a></div>
-                <div class="mega-col"><div class="mega-col-title">Energia</div><a href="solucoes.html#energia-solar">Sistema Off Grid</a><a href="solucoes.html#cerca-eletrica">Cerca elétrica</a></div>
-                <div class="mega-col"><div class="mega-col-title">Tecnologia</div><a href="solucoes.html#gravadores">Gravadores</a><a href="solucoes.html#hardware">Hardware e redes</a></div>
-            </div>
-        </li>
-        <li><a href="produtos.html"><i class="fas fa-boxes"></i> Produtos <span class="arrow"><i class="fas fa-chevron-down"></i></span></a>
-            <div class="mega-menu">
-                <div class="mega-col"><div class="mega-col-title">Catálogo e loja</div><a href="catalogo.html">Catálogo geral</a><a href="loja-virtual.html">Loja virtual</a></div>
-                <div class="mega-col"><div class="mega-col-title">Downloads</div><a href="produtos.html#aplicativos">Aplicativos</a><a href="produtos.html#manuais">Manuais</a></div>
-                <div class="mega-col"><div class="mega-col-title">Modelos</div><a href="produtos.html#templates">Templates</a><a href="produtos.html#cardapio">Cardápios digitais</a></div>
-            </div>
-        </li>
-        <li><a href="tecnologia.html"><i class="fas fa-microchip"></i> Tecnologia <span class="arrow"><i class="fas fa-chevron-down"></i></span></a>
-            <div class="mega-menu">
-                <div class="mega-col"><div class="mega-col-title">IA e integração</div><a href="tecnologia.html#ia">Assistente IA</a><a href="tecnologia.html#api-erp">API e ERP</a></div>
-                <div class="mega-col"><div class="mega-col-title">Análise</div><a href="tecnologia.html#analise">Análise e relatórios</a><a href="tecnologia.html#seo">SEO</a></div>
-                <div class="mega-col"><div class="mega-col-title">Comunicação</div><a href="tecnologia.html#dominio">Domínio e alojamento</a><a href="tecnologia.html#comunicacao">Comunicação digital</a></div>
-            </div>
-        </li>
-        <li><a href="comunidade.html"><i class="fas fa-users"></i> Comunidade <span class="arrow"><i class="fas fa-chevron-down"></i></span></a>
-            <div class="mega-menu">
-                <div class="mega-col"><div class="mega-col-title">Aprendizagem</div><a href="comunidade.html#cursos">Cursos</a><a href="comunidade.html#webinars">Webinars</a></div>
-                <div class="mega-col"><div class="mega-col-title">Notícias</div><a href="comunidade.html#notificacoes">Notificações</a><a href="comunidade.html#atualizacoes">Atualizações</a></div>
-                <div class="mega-col"><div class="mega-col-title">Apoio</div><a href="comunidade.html#ajuda">Central de ajuda</a><a href="comunidade.html#suporte">Suporte técnico</a></div>
-            </div>
-        </li>
-        <li><a href="contactos.html"><i class="fas fa-envelope"></i> Contactos</a></li>
-        <li><a href="admin.html"><i class="fas fa-cog"></i> Admin</a></li>
-        <li><a href="#" class="nav-link" data-page="erp" onclick="navigate('erp');return false;"><i class="fas fa-desktop"></i> ERP</a></li>
-        <li><a class="nav-cart" onclick="openCart()" style="cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;padding:.5rem 1rem;border-radius:40px;background:var(--primary);color:#fff;text-decoration:none;"><i class="fas fa-shopping-cart"></i> <span class="cart-count">0</span></a></li>
-    </ul>
-</nav>
 
 <!-- PÁGINAS SPA -->
 <div id="page-inicio" class="page active">
@@ -223,25 +171,10 @@
     </div>
 </div>
 
-<!-- FOOTER -->
-<footer>
-    <div class="footer-grid" style="max-width:1300px;margin:0 auto;">
-        <div class="footer-col"><strong>D.PEDRO SOLUÇÕES</strong><p>Comércio e Prestação de Serviços, Lda.</p><p>Luanda, Angola</p></div>
-        <div class="footer-col"><strong>Sede</strong><p>Viana, Vila Flor, Luanda</p><p>Rua Direita da Engevia</p></div>
-        <div class="footer-col"><strong>Contactos</strong><p>+244 946 299 834</p><p>+244 959 777 301</p><p>dpedroservice@gmail.com</p></div>
-        <div class="footer-col"><strong>Links</strong>
-            <a href="#" onclick="navigate('inicio');return false;">Início</a>
-            <a href="empresa.html">Empresa</a>
-            <a href="#" onclick="navigate('loja');return false;">Loja</a>
-            <a href="#" onclick="navigate('erp');return false;">ERP</a>
-            <a href="#" onclick="navigate('contactos');return false;">Contactos</a>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <div>© 2026 D.PEDRO SOLUÇÕES – Todos os direitos reservados</div>
-        <div><span onclick="alert('🍪 Cookies.')">cookies</span> | <span onclick="alert('📜 Termos.')">termos</span></div>
-    </div>
-</footer>
+<!-- Rodapé partilhado com as restantes páginas -->
+<footer data-site-footer></footer>
+
+
 
 <a href="https://wa.me/244946299834" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
 <div class="top-arrow" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
