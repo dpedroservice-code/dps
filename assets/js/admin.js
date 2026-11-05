@@ -249,14 +249,20 @@
     URL.revokeObjectURL(url);
   }
 
-  function resetAll() {
-    if (!confirm('⚠️ APAGAR TODOS OS DADOS e restaurar os 100 produtos originais?')) return;
+  async function resetAll() {
+    if (!confirm('Limpar apenas o cache local deste navegador? Os produtos e pedidos guardados no Supabase NÃO serão apagados.')) return;
     localStorage.removeItem('dpedro_products_v3');
     localStorage.removeItem(STORAGE_ORDERS);
     if (window.ERP_BRIDGE) window.ERP_BRIDGE.clearLogs();
-    products = window.DPEDRO_DB.loadProducts();
-    renderAdmin();
-    showToast('🔄 Dados restaurados');
+    try {
+      if (window.DPS_CLOUD_STORE) {
+        await window.DPS_CLOUD_STORE.loadAdminProducts();
+        await window.DPS_CLOUD_STORE.loadOrders();
+      }
+      products = window.DPEDRO_DB.loadProducts();
+      renderAdmin(); await renderOrders();
+      showToast('Cache local limpo; dados da nuvem recarregados.');
+    } catch (error) { showToast('Cache limpo, mas a nuvem não foi recarregada: ' + error.message); }
   }
 
   // ---------- ERP TAB ----------
