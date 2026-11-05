@@ -222,19 +222,16 @@
   }
 
   function shareProduct(id) {
-    const p = products.find(x => x.id === id);
+    const p = products.find(x => String(x.id) === String(id));
     if (!p) return;
-    p.status = 'partilhado';
-    p.shared = true;
-    p.updatedAt = new Date().toISOString();
-    window.DPEDRO_DB.saveProducts(products);
-    renderAdmin();
-
-    const msg = `*${p.name}*\n${window.DPEDRO_DB.fmtKz(p.promo || p.price)}\n\n${p.description || ''}\n\n👉 https://dpedrosolucoes.shop/loja.html#produto-${p.id}`;
+    if (p.status !== 'publicado') { alert('Publique o produto antes de partilhar o link público.'); return; }
+    const msg = '*' + p.name + '*\\n' + window.DPEDRO_DB.fmtKz(p.promo || p.price) +
+      '\\n\\n' + (p.description || '') + '\\n\\n👉 https://dpedrosolucoes.shop/#loja';
+    const shareUrl = 'https://dpedrosolucoes.shop/#loja';
     if (navigator.share) {
-      navigator.share({ title: p.name, text: msg, url: `https://dpedrosolucoes.shop/loja.html#produto-${p.id}` }).catch(() => {});
+      navigator.share({ title: p.name, text: msg, url: shareUrl }).catch(() => {});
     } else {
-      navigator.clipboard.writeText(msg).then(() => showToast('📋 Link copiado'));
+      navigator.clipboard.writeText(msg).then(() => showToast('Link copiado')).catch(() => showToast('Não foi possível copiar o link.'));
     }
   }
 
