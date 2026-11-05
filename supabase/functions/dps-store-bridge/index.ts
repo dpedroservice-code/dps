@@ -152,25 +152,54 @@ Deno.serve(async (req: Request) => {
 
     if (action === "sync-kanawa") return await syncKanawa(req, body);
 
-    if (action === "configure-api") {
+    if (action === "connect-api") {
       const companyId = String(body.company_id || COMPANY_ID);
       if (companyId !== COMPANY_ID) return json(req, 403, { ok: false, error: "Empresa não autorizada." });
       const user = await authenticate(req, companyId);
-      const apiSecret = String(body.api_secret || "").trim();
-      const apiKeyId = String(body.api_key_id || "");
-      const apiKeyPrefix = String(body.api_key_prefix || "");
-      const apiName = String(body.api_name || "D.PEDRO SOLUÇÕES e-Commerce").trim();
       const purpose = String(body.purpose || "").trim();
-      if (!apiSecret.startsWith("ks_live_") || apiSecret.length < 40 || !apiKeyId || !apiKeyPrefix || purpose.length < 5) {
-        return json(req, 422, { ok: false, error: "Os dados da chave/API ou a finalidade estão incompletos." });
+      if (purpose.length < 5 || purpose.length > 240) return json(req, 422, { ok: false, error: "Indique uma finalidade válida para a chave." });
+      const apiName = "D.PEDRO SOLUÇÕES e-Commerce";
+      const origins = ["https://dpedrosolucoes.shop","https://www.dpedrosolucoes.shop","https://dpedrosolucoeslda.netlify.app"];
+      const { data: previous } = await admin.from("dps_store_integrations").select("api_key_id").eq("company_id", companyId).maybeSingle();
+      const authorization = req.headers.get("Authorization") || "";
+      const createResponse = await fetch(URL + "/functions/v1/ks-store-api", {
+        method: "POST",
+        headers: { "Authorization": authorization, "apikey": ANON, "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "create-key", company_id: companyId, name: apiName, purpose, allowed_origins: origins })
+      });
+      const issued: any = await createResponse.json().catch(() => ({}));
+      if (!createResponse.ok || issued.success !== true || !issued.secret || !issued.key?.id || !issued.key?.key_prefix) {
+        return json(req, 502, { ok: false, error: issued.error || "O KanawaSoft não conseguiu emitir a chave de leitura." });
       }
       const apiUrl = URL + "/functions/v1/ks-store-api/catalog/products";
-      const { data, error } = await admin.rpc("dps_store_save_api_integration", {
+      const { data: secretId, error: saveError } = await admin.rpc("dps_store_save_api_integration", {
         p_company_id: companyId, p_api_name: apiName, p_api_url: apiUrl, p_purpose: purpose,
-        p_api_key_id: apiKeyId, p_api_key_prefix: apiKeyPrefix, p_api_secret: apiSecret, p_created_by: user.id
+        p_api_key_id: issued.key.id, p_api_key_prefix: issued.key.key_prefix,
+        p_api_secret: issued.secret, p_created_by: user.id
       });
-      if (error || !data) return json(req, 500, { ok: false, error: "Não foi possível guardar a credencial no cofre seguro." });
-      return json(req, 200, { ok: true, api_name: apiName, api_url: apiUrl, api_key_prefix: apiKeyPrefix, purpose, secret_stored_securely: true });
+      if (saveError || !secretId) {
+        await fetch(URL + "/functions/v1/ks-store-api", {
+          method: "POST",
+          headers: { "Authorization": authorization, "apikey": ANON, "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "revoke-key", company_id: companyId, key_id: issued.key.id })
+        }).catch(() => {});
+        return json(req, 500, { ok: false, error: "A chave foi emitida, mas não foi possível guardá-la no Supabase Vault. A chave nova foi revogada." });
+      }
+      let previousRevoked = true;
+      if (previous?.api_key_id && previous.api_key_id !== issued.key.id) {
+        try {
+          const revokeResponse = await fetch(URL + "/functions/v1/ks-store-api", {
+            method: "POST",
+            headers: { "Authorization": authorization, "apikey": ANON, "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "revoke-key", company_id: companyId, key_id: previous.api_key_id })
+          });
+          previousRevoked = revokeResponse.ok;
+        } catch (_) { previousRevoked = false; }
+      }
+      return json(req, 200, {
+        ok: true, api_name: apiName, api_url: apiUrl, api_key_prefix: issued.key.key_prefix,
+        purpose, secret_stored_securely: true, previous_key_revoked: previousRevoked
+      });
     }
 
     if (action === "api-status") {
