@@ -152,10 +152,10 @@
                 <p style="color:var(--text-muted);font-size:.85rem;margin:.5rem 0;">Exportar produtos, pedidos e logs</p>
                 <button class="btn btn-primary" onclick="ADMIN.exportAll()"><i class="fas fa-download"></i> Exportar</button>
             </div>
-            <div style="padding:1.2rem;background:#fef2f2;border-radius:var(--radius);">
-                <h4 style="color:#991b1b;">Reset</h4>
-                <p style="color:var(--text-muted);font-size:.85rem;margin:.5rem 0;">Apagar todos os dados e restaurar 100 produtos</p>
-                <button class="btn btn-danger" onclick="ADMIN.resetAll()"><i class="fas fa-bomb"></i> Reset Total</button>
+            <div style="padding:1.2rem;background:var(--bg);border-radius:var(--radius);">
+                <h4>Cache deste dispositivo</h4>
+                <p style="color:var(--text-muted);font-size:.85rem;margin:.5rem 0;">Limpar apenas a cópia local e recarregar produtos e pedidos do Supabase. Os dados centrais não serão apagados.</p>
+                <button class="btn btn-secondary" onclick="ADMIN.resetAll()"><i class="fas fa-broom"></i> Limpar cache local</button>
             </div>
         </div>
     </div>
