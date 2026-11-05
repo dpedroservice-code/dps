@@ -11,7 +11,7 @@ const navItems=[
  ['Comunidade','comunidade.html','users',[['Cursos','comunidade.html#cursos'],['Webinars','comunidade.html#webinars'],['Notificações','comunidade.html#notificacoes'],['Atualizações','comunidade.html#atualizacoes'],['Central de ajuda','comunidade.html#ajuda'],['Suporte técnico','comunidade.html#suporte']]],
  ['Contactos','contactos.html','envelope'],
  ['Admin','admin.html','lock'],
- ['KanawaSoft ERP','erp.html','desktop']
+ ['KanawaSoft ERP','index.html#erp','desktop']
 ];
 function item([label,url,icon,children]){
  if(!children)return '<li><a href="'+url+'">'+label+'</a></li>';
