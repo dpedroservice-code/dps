@@ -4,7 +4,7 @@
 
 1. No painel D.PEDRO, um administrador autenticado escolhe **Ligar / emitir chave de API**.
 2. A função `ks-store-api` emite uma chave exclusiva para D.PEDRO, com escopo de leitura do catálogo e finalidade registada.
-3. O segredo é enviado por HTTPS à função `dps-store-bridge` e guardado no Supabase Vault. O navegador não o persiste nem o volta a apresentar.
+3. A própria função `dps-store-bridge` solicita a chave ao KanawaSoft, recebe o segredo no servidor e guarda-o no Supabase Vault. O segredo nunca é devolvido ao navegador nem gravado no localStorage.
 4. A sincronização consulta o endpoint `/functions/v1/ks-store-api/catalog/products` em modo somente leitura.
 5. Os registos são copiados para `dps_store_products`. Produtos novos entram como rascunho.
 6. O administrador filtra por categoria, origem, estado ou pesquisa, revê o catálogo e publica os produtos escolhidos.
