@@ -63,7 +63,8 @@
     const items = loadCart();
     const it = items.find(i => i.id === id);
     if (!it) return;
-    it.qty = Math.max(1, Math.min(Number(it.stock) || 999999, it.qty + delta));
+    const maxStock = it.stock == null ? 999999 : Math.max(0, Number(it.stock));
+    it.qty = Math.max(1, Math.min(maxStock || 1, it.qty + delta));
     saveCart(items);
     renderCart();
   }
