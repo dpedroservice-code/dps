@@ -50,14 +50,30 @@
       if (!toggle && menu) {
         toggle = document.createElement('button');
         toggle.id = 'navToggle';
-        toggle.innerHTML = '<i class="fas fa-bars"></i>';
+        toggle.type = 'button';
+        toggle.innerHTML = '<i class="fas fa-bars" aria-hidden="true"></i>';
+        toggle.setAttribute('aria-label', 'Abrir menu');
+        toggle.setAttribute('aria-controls', 'primary-navigation');
+        toggle.setAttribute('aria-expanded', 'false');
         toggle.style.cssText = 'background:var(--primary);color:#fff;border:none;width:44px;height:44px;border-radius:12px;cursor:pointer;font-size:1.2rem;margin-left:auto;';
         toggle.onclick = () => {
-          menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+          const isOpen = menu.classList.toggle('is-open');
+          toggle.setAttribute('aria-expanded', String(isOpen));
+          toggle.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+          toggle.innerHTML = isOpen ? '<i class="fas fa-times" aria-hidden="true"></i>' : '<i class="fas fa-bars" aria-hidden="true"></i>';
         };
         nav.appendChild(toggle);
       }
-      if (menu) menu.style.display = 'none';
+      if (menu) {
+        menu.id = 'primary-navigation';
+        menu.classList.remove('is-open');
+        menu.style.display = '';
+        if (toggle) {
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Abrir menu');
+          toggle.innerHTML = '<i class="fas fa-bars" aria-hidden="true"></i>';
+        }
+      }
     } else {
       if (toggle) toggle.remove();
       if (menu) menu.style.display = '';
