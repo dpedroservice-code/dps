@@ -10,6 +10,10 @@
 
   const categories = [
     { id: 'all',         name: 'Todos',                    icon: 'fa-th' },
+    { id: 'cftv',        name: 'CCTV / CFTV',               icon: 'fa-video' },
+    { id: 'seguranca',   name: 'Segurança',                 icon: 'fa-shield-alt' },
+    { id: 'acesso',      name: 'Controlo de Acesso',        icon: 'fa-fingerprint' },
+    { id: 'redes',       name: 'Redes',                     icon: 'fa-network-wired' },
     { id: 'informatica', name: 'Informática & Redes',      icon: 'fa-laptop' },
     { id: 'grafica',     name: 'Gráfica & Design',         icon: 'fa-print' },
     { id: 'energia',     name: 'Energia Solar & Elétrico', icon: 'fa-solar-panel' },
