@@ -16,33 +16,12 @@
         .video-box iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; }
         .stat-big { font-size:3rem; font-weight:800; color:var(--primary); text-align:center; }
     </style>
+<link rel="stylesheet" href="assets/css/site-shell.css">
 </head>
 <body>
 
-<div class="top-bar">
-    <div class="contact-info">
-        <span><i class="fas fa-phone-alt"></i> 946 299 834 | 959 777 301</span>
-        <span><i class="fas fa-map-marker-alt"></i> Viana, Vila Flor</span>
-        <span><i class="fas fa-envelope"></i> dpedroservice@gmail.com</span>
-    </div>
-    <div class="social-links">
-        <a href="https://wa.me/244946299834" target="_blank"><i class="fab fa-whatsapp"></i></a>
-        <a href="index.html"><i class="fas fa-home"></i></a>
-    </div>
-</div>
+<header data-site-header></header>
 
-<nav>
-    <a href="index.html" class="logo">
-        <img src="assets/1.png" alt="DP" onerror="this.style.display='none'">
-        <div class="logo-text">D.PEDRO SOLUÇÕES <small>EMPRESA</small></div>
-    </a>
-    <ul class="nav-menu">
-        <li><a href="index.html"><i class="fas fa-home"></i> Início</a></li>
-        <li><a href="empresa.html" class="active"><i class="fas fa-building"></i> Empresa</a></li>
-        <li><a href="index.html#loja" onclick="location.href='index.html#loja';return false;"><i class="fas fa-store"></i> Loja</a></li>
-        <li><a href="index.html#erp" onclick="location.href='index.html#erp';return false;"><i class="fas fa-desktop"></i> ERP</a></li>
-    </ul>
-</nav>
 
 <main class="container">
 
@@ -103,15 +82,7 @@
         </div>
     </div>
 
-    <!-- ESTATÍSTICAS -->
-    <h2 class="section-title reveal"><i class="fas fa-chart-line"></i> Em Números</h2>
-    <div class="metric-grid reveal">
-        <div class="metric-card"><div class="label">Anos</div><div class="value" data-count="5">0</div></div>
-        <div class="metric-card" style="border-left-color:var(--success)"><div class="label">Clientes</div><div class="value" data-count="200">0</div></div>
-        <div class="metric-card" style="border-left-color:var(--warning)"><div class="label">Produtos</div><div class="value" data-count="100">0</div></div>
-        <div class="metric-card" style="border-left-color:var(--primary-light)"><div class="label">Suporte</div><div class="value" data-count="24">0</div></div>
-    </div>
-
+    <!-- A secção de métricas foi retirada: não há números comerciais verificados para publicar. -->
     <!-- IA ASSISTANT -->
     <h2 class="section-title reveal" id="ia"><i class="fas fa-robot"></i> Assistente IA</h2>
     <div class="info-card reveal" style="text-align:center;padding:2rem;">
@@ -128,21 +99,14 @@
     </div>
 </main>
 
-<footer>
-    <div class="footer-grid" style="max-width:1300px;margin:0 auto;">
-        <div class="footer-col"><strong>D.PEDRO SOLUÇÕES</strong><p>Comércio e Serviços, Lda.</p><p>Luanda, Angola</p></div>
-        <div class="footer-col"><strong>Contactos</strong><p>+244 946 299 834</p><p>dpedroservice@gmail.com</p></div>
-        <div class="footer-col"><strong>Links</strong><a href="index.html">Início</a><a href="index.html#loja">Loja</a><a href="index.html#erp">ERP</a></div>
-    </div>
-    <div class="footer-bottom"><div>© 2026 D.PEDRO SOLUÇÕES</div></div>
-</footer>
+<footer data-site-footer></footer>
 
 <a href="https://wa.me/244946299834" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
 <div id="aiAssistant"></div>
 
 <script src="assets/js/products.js"></script>
 <script src="assets/js/ai-assistant.js"></script>
-<script src="assets/js/nav-responsive.js"></script>
+
 <script>
 // Reveal on scroll
 const obs = new IntersectionObserver(entries => {
@@ -163,5 +127,6 @@ document.querySelectorAll('[data-count]').forEach(el => {
   }, 30);
 });
 </script>
+<script defer src="assets/js/site-shell.js"></script>
 </body>
 </html>

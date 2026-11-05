@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="assets/1.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/admin.css">
     <style>
         .login-box {
             max-width:400px; margin:4rem auto; background:var(--card);
@@ -59,21 +60,26 @@
 </div>
 
 <!-- PAINEL -->
-<div id="adminPanel" style="display:none;padding:2rem 5%;">
-    <div class="admin-tabs">
-        <button class="admin-tab active" onclick="ADMIN.switchTab('products',this)"><i class="fas fa-box"></i> Produtos</button>
-        <button class="admin-tab" onclick="ADMIN.switchTab('orders',this)"><i class="fas fa-receipt"></i> Pedidos</button>
-        <button class="admin-tab" onclick="ADMIN.switchTab('erp',this)"><i class="fas fa-plug"></i> ERP & API</button>
-        <button class="admin-tab" onclick="ADMIN.switchTab('tools',this)"><i class="fas fa-tools"></i> Ferramentas</button>
+<div id="adminPanel" class="admin-shell" style="display:none;padding:2rem 5%;">
+<header class="admin-welcome"><div><span class="admin-eyebrow">CENTRO DE GESTÃO</span><h1>Painel administrativo</h1><p>Gestão operacional, catálogo, pedidos e integrações da D.PEDRO SOLUÇÕES.</p></div><div class="admin-welcome-actions"><span class="admin-session"><i class="fas fa-shield-alt"></i> Sessão protegida</span><a class="btn btn-secondary" href="index.html">Ver website</a></div></header>
+    <div class="admin-tabs" role="tablist" aria-label="Secções administrativas">
+        <button class="admin-tab active" role="tab" aria-selected="true" onclick="ADMIN.switchTab('overview',this)"><i class="fas fa-chart-pie"></i> Visão geral</button>
+        <button class="admin-tab" role="tab" aria-selected="false" onclick="ADMIN.switchTab('products',this)"><i class="fas fa-box"></i> Produtos</button>
+        <button class="admin-tab" role="tab" aria-selected="false" onclick="ADMIN.switchTab('orders',this)"><i class="fas fa-receipt"></i> Pedidos</button>
+        <button class="admin-tab" role="tab" aria-selected="false" onclick="ADMIN.switchTab('erp',this)"><i class="fas fa-plug"></i> ERP & API</button>
+        <button class="admin-tab" role="tab" aria-selected="false" onclick="ADMIN.switchTab('tools',this)"><i class="fas fa-tools"></i> Ferramentas</button>
     </div>
 
+    <section id="tabOverview" class="admin-content" role="tabpanel"><div class="admin-section-heading"><div><h2>Resumo da operação</h2><p>Indicadores partilhados, carregados a partir do Supabase.</p></div><button class="btn btn-primary" onclick="ADMIN.refresh()">Atualizar dados</button></div><div class="admin-kpi-grid"><article class="admin-kpi"><span>Produtos no catálogo</span><strong id="overviewProducts">0</strong><small>Registos Supabase</small></article><article class="admin-kpi"><span>Produtos publicados</span><strong id="overviewPublished">0</strong><small>Estado do catálogo</small></article><article class="admin-kpi"><span>Stock baixo</span><strong id="overviewLowStock">0</strong><small>Até 5 unidades</small></article><article class="admin-kpi"><span>Pedidos registados</span><strong id="overviewOrders">0</strong><small>Registos locais</small></article><article class="admin-kpi"><span>Valor dos pedidos</span><strong id="overviewRevenue">0 Kz</strong><small>Soma Supabase</small></article></div><div class="admin-overview-grid"><section class="admin-panel"><h3>Atenção operacional</h3><div id="overviewAlerts" class="admin-list"></div></section><section class="admin-panel"><h3>Atividade recente</h3><div id="overviewActivity" class="admin-list"></div></section></div><p class="admin-data-note">Produtos, estados de publicação e pedidos são guardados no Supabase e ficam disponíveis nos dispositivos com sessão autorizada.</p></section>
+
     <!-- TAB PRODUTOS -->
-    <div id="tabProducts" class="admin-content">
+    <div id="tabProducts" class="admin-content" style="display:none;" role="tabpanel">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
-            <h2><i class="fas fa-box"></i> Produtos (100)</h2>
-            <button class="btn btn-success" onclick="ADMIN.openForm()"><i class="fas fa-plus"></i> Novo Produto</button>
+            <h2><i class="fas fa-box"></i> Produtos</h2>
+            <div style="display:flex;gap:.6rem;flex-wrap:wrap;"><button class="btn btn-primary" onclick="ADMIN.syncProducts()"><i class="fas fa-sync-alt"></i> Sincronizar KanawaSoft</button><button class="btn btn-success" onclick="ADMIN.openForm()"><i class="fas fa-plus"></i> Novo Produto</button></div>
         </div>
 
+        <div class="note-panel" role="note" style="margin:1rem 0;padding:1rem;border-left:4px solid #f59e0b;background:#fffbeb;color:#78350f;border-radius:.6rem;">Catálogo partilhado via Supabase entre dispositivos. Os produtos do KanawaSoft são importados como rascunho; revise categoria e disponibilidade e publique apenas os produtos que pretende vender. Preço e stock dos produtos ERP são atualizados na sincronização.</div>
         <div class="stats-grid">
             <div class="stat-box"><div class="label">Total</div><div class="value blue" id="statTotal">0</div></div>
             <div class="stat-box"><div class="label">Publicados</div><div class="value green" id="statPublicado">0</div></div>
@@ -87,6 +93,8 @@
             <button class="filter-btn" data-filter="publicado" onclick="ADMIN.setFilter('publicado')">Publicados</button>
             <button class="filter-btn" data-filter="rascunho" onclick="ADMIN.setFilter('rascunho')">Rascunhos</button>
             <button class="filter-btn" data-filter="partilhado" onclick="ADMIN.setFilter('partilhado')">Partilhados</button>
+            <select id="adminCategoryFilter" onchange="ADMIN.setCategoryFilter(this.value)" style="padding:.5rem .8rem;border:2px solid var(--border);border-radius:30px;background:var(--card);color:var(--text);"><option value="all">Todas as categorias</option><option value="cftv">CCTV / CFTV</option><option value="seguranca">Segurança</option><option value="acesso">Controlo de acesso</option><option value="redes">Redes</option><option value="informatica">Informática</option><option value="grafica">Gráfica</option><option value="energia">Energia</option><option value="papelaria">Papelaria</option><option value="telecom">Telecom</option><option value="rastreio">Rastreio</option><option value="servicos">Serviços</option></select>
+            <select id="adminSourceFilter" onchange="ADMIN.setSourceFilter(this.value)" style="padding:.5rem .8rem;border:2px solid var(--border);border-radius:30px;background:var(--card);color:var(--text);"><option value="all">Todas as origens</option><option value="kanawa">KanawaSoft ERP</option><option value="manual">Manual</option></select>
             <input type="text" placeholder="🔍 Procurar..." oninput="ADMIN.setSearch(this.value)"
                 style="flex:1;min-width:180px;padding:.5rem 1rem;border:2px solid var(--border);border-radius:30px;background:var(--card);color:var(--text);font-family:inherit;">
         </div>
@@ -95,7 +103,7 @@
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>Img</th><th>Nome</th><th>Categoria</th><th>Preço</th>
+                        <th>Img</th><th>Nome</th><th>Categoria</th><th>Origem</th><th>Preço</th>
                         <th>Stock</th><th>Estado</th><th>Ações</th>
                     </tr>
                 </thead>
@@ -107,6 +115,7 @@
     <!-- TAB PEDIDOS -->
     <div id="tabOrders" class="admin-content" style="display:none;">
         <h2><i class="fas fa-receipt"></i> Pedidos</h2>
+        <p class="admin-muted">Pedidos registados no Supabase e partilhados entre dispositivos autorizados. O estado inicial é “aguarda contacto”; não significa pagamento confirmado nem reserva de stock.</p>
         <div id="ordersList" style="margin-top:1rem;"></div>
     </div>
 
@@ -116,9 +125,11 @@
 
         <div style="background:var(--card);padding:1.5rem;border-radius:var(--radius);margin:1rem 0;">
             <h3 style="margin-bottom:1rem;color:var(--text);">🔐 Ligação segura ao ERP</h3>
-            <p style="color:var(--text-muted);margin-bottom:1rem;">As credenciais da API não são guardadas neste navegador. Configure no Supabase Edge Function Secrets: ERP_API_BASE_URL, ERP_API_KEY e ERP_API_STORE_ID. A função valida sessão, empresa, licença e permissões antes de encaminhar cada evento.</p>
-            <div id="erpConnectionStatus" role="status" style="padding:1rem;border-radius:.7rem;background:var(--bg);margin-bottom:1rem;">Estado: aguarda configuração e teste do serviço ERP.</div>
-            <button class="btn btn-success" onclick="ADMIN.syncProducts()"><i class="fas fa-sync-alt"></i> Testar sincronização de produtos</button>
+            <p style="color:var(--text-muted);margin-bottom:1rem;">A ligação emite uma chave exclusiva com permissão somente de leitura no KanawaSoft 1.2.0. O segredo é enviado diretamente ao servidor e guardado no Supabase Vault; não fica no navegador nem é apresentado novamente. A finalidade fica registada para auditoria. A sincronização importa os produtos para revisão e não os publica automaticamente.</p>
+            <label for="kanawaApiPurpose" style="display:block;margin:.7rem 0 .35rem;font-weight:700;">Finalidade da chave de API</label>
+            <input id="kanawaApiPurpose" type="text" value="Leitura do catálogo do KanawaSoft para revisão e publicação na loja online D.PEDRO SOLUÇÕES." maxlength="240" style="width:100%;padding:.8rem;border:1px solid var(--border);border-radius:.6rem;background:var(--bg);color:var(--text);margin-bottom:.8rem;">
+            <div id="erpConnectionStatus" role="status" style="padding:1rem;border-radius:.7rem;background:var(--bg);margin-bottom:1rem;">Estado: API ainda não ligada.</div>
+            <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem;"><button class="btn btn-primary" onclick="ADMIN.connectKanawa()"><i class="fas fa-key"></i> Ligar / emitir chave de API</button><button class="btn btn-success" onclick="ADMIN.syncProducts()"><i class="fas fa-sync-alt"></i> Sincronizar produtos do KanawaSoft</button></div>
         </div>
 
         <div style="background:var(--card);padding:1.5rem;border-radius:var(--radius);margin:1rem 0;">
@@ -141,10 +152,10 @@
                 <p style="color:var(--text-muted);font-size:.85rem;margin:.5rem 0;">Exportar produtos, pedidos e logs</p>
                 <button class="btn btn-primary" onclick="ADMIN.exportAll()"><i class="fas fa-download"></i> Exportar</button>
             </div>
-            <div style="padding:1.2rem;background:#fef2f2;border-radius:var(--radius);">
-                <h4 style="color:#991b1b;">Reset</h4>
-                <p style="color:var(--text-muted);font-size:.85rem;margin:.5rem 0;">Apagar todos os dados e restaurar 100 produtos</p>
-                <button class="btn btn-danger" onclick="ADMIN.resetAll()"><i class="fas fa-bomb"></i> Reset Total</button>
+            <div style="padding:1.2rem;background:var(--bg);border-radius:var(--radius);">
+                <h4>Cache deste dispositivo</h4>
+                <p style="color:var(--text-muted);font-size:.85rem;margin:.5rem 0;">Limpar apenas a cópia local e recarregar produtos e pedidos do Supabase. Os dados centrais não serão apagados.</p>
+                <button class="btn btn-secondary" onclick="ADMIN.resetAll()"><i class="fas fa-broom"></i> Limpar cache local</button>
             </div>
         </div>
     </div>
@@ -169,11 +180,11 @@
                 <div class="form-group"><label>Garantia</label><input type="text" id="formWarranty"></div>
             </div>
             <div class="form-row">
-                <div class="form-group"><label>Preço (Kz) *</label><input type="number" id="formPrice"></div>
-                <div class="form-group"><label>Promo (Kz)</label><input type="number" id="formPromo"></div>
+                <div class="form-group"><label for="formPrice">Preço (Kz) *</label><input type="number" id="formPrice" min="1" step="1" required inputmode="numeric"></div>
+                <div class="form-group"><label for="formPromo">Promo (Kz)</label><input type="number" id="formPromo" min="1" step="1" inputmode="numeric"></div>
             </div>
             <div class="form-row">
-                <div class="form-group"><label>Stock</label><input type="number" id="formStock"></div>
+                <div class="form-group"><label for="formStock">Stock</label><input type="number" id="formStock" min="0" step="1" value="0" inputmode="numeric"></div>
                 <div class="form-group"><label>Imagem (URL)</label><input type="text" id="formImage" placeholder="assets/1.png"></div>
             </div>
             <div class="form-group"><label>Especificações</label><input type="text" id="formSpecs"></div>
@@ -192,6 +203,7 @@
 <script src="assets/js/supabase-config.js"></script>
 <script src="assets/js/auth.js"></script>
 <script src="assets/js/products.js"></script>
+<script src="assets/js/cloud-store.js"></script>
 <script src="assets/js/erp-bridge.js"></script>
 <script src="assets/js/admin.js"></script>
 </body>

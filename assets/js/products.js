@@ -1,5 +1,5 @@
 /* =========================================================
-   D.PEDRO SOLUÇÕES — BASE DE DADOS (100 PRODUTOS)
+   D.PEDRO SOLUÇÕES — CATÁLOGO DE PRODUTOS
    Imagens: assets/1.png → assets/100.png
    Estados: publicado | rascunho | partilhado
    ========================================================= */
@@ -10,6 +10,10 @@
 
   const categories = [
     { id: 'all',         name: 'Todos',                    icon: 'fa-th' },
+    { id: 'cftv',        name: 'CCTV / CFTV',               icon: 'fa-video' },
+    { id: 'seguranca',   name: 'Segurança',                 icon: 'fa-shield-alt' },
+    { id: 'acesso',      name: 'Controlo de Acesso',        icon: 'fa-fingerprint' },
+    { id: 'redes',       name: 'Redes',                     icon: 'fa-network-wired' },
     { id: 'informatica', name: 'Informática & Redes',      icon: 'fa-laptop' },
     { id: 'grafica',     name: 'Gráfica & Design',         icon: 'fa-print' },
     { id: 'energia',     name: 'Energia Solar & Elétrico', icon: 'fa-solar-panel' },
@@ -19,7 +23,7 @@
     { id: 'servicos',    name: 'Serviços Empresariais',    icon: 'fa-briefcase' }
   ];
 
-  /* Gerador de 100 produtos — distribui pelas 7 categorias */
+  /* Dados de demonstração legados: nunca são publicados automaticamente. */
   const seedProducts = (() => {
     const base = [
       // 1-15 Informática
@@ -129,7 +133,7 @@
         image: `assets/${id}.png`,
         specs: src.specs,
         description: src.desc,
-        status: 'publicado',          // publicado | rascunho | partilhado
+        status: 'rascunho',            // dados de demonstração; nunca publicar sem validação
         shared: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
@@ -142,14 +146,27 @@
   function loadProducts() {
     try {
       const raw = localStorage.getItem(STORAGE_PRODUCTS);
-      if (raw) {
-        const p = JSON.parse(raw);
-        if (Array.isArray(p) && p.length === 100) return p;
+      if (!raw) return [];
+      const list = JSON.parse(raw);
+      if (!Array.isArray(list)) return [];
+      // O conjunto inicial antigo era gerado automaticamente (nomes, preços e stock fictícios).
+      // Preserva-o numa chave de recuperação, mas nunca o apresenta como inventário real.
+      const legacyDemo = list.length === seedProducts.length &&
+        seedProducts.every((seed, index) => list[index]?.id === seed.id && list[index]?.name === seed.name);
+      if (legacyDemo) {
+        if (!localStorage.getItem(STORAGE_PRODUCTS + '_demo_backup')) {
+          localStorage.setItem(STORAGE_PRODUCTS + '_demo_backup', raw);
+        }
+        return [];
       }
-    } catch (e) {}
-    return JSON.parse(JSON.stringify(seedProducts));
+      return list;
+    } catch (e) {
+      console.error('Não foi possível ler o catálogo local:', e);
+      return [];
+    }
   }
   function saveProducts(list) {
+    if (!Array.isArray(list)) throw new TypeError('O catálogo deve ser uma lista de produtos.');
     localStorage.setItem(STORAGE_PRODUCTS, JSON.stringify(list));
   }
   function fmtKz(n) {
