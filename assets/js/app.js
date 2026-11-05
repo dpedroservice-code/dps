@@ -32,7 +32,7 @@
     const grid = document.getElementById('featuredProducts');
     if (!grid) return;
     const featured = products.filter(p => p.status === 'publicado' && p.promo && p.promo < p.price).slice(0, 8);
-    grid.innerHTML = featured.map(productCardHTML).join('');
+    grid.innerHTML = featured.length ? featured.map(productCardHTML).join('') : '<p class="section-subtitle">Ainda não há produtos em destaque com preço e disponibilidade confirmados. Contacte-nos para consultar opções.</p>';
   }
 
   // ============ CATEGORIAS ============
@@ -114,7 +114,7 @@
     if (sort === 'price-desc') filtered.sort((a, b) => (b.promo || b.price) - (a.promo || a.price));
     if (sort === 'name')       filtered.sort((a, b) => a.name.localeCompare(b.name));
     if (!filtered.length) {
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted);"><i class="fas fa-search" style="font-size:3rem;margin-bottom:1rem;display:block;"></i>Nenhum produto encontrado.</div>';
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted);"><i class="fas fa-box-open" style="font-size:3rem;margin-bottom:1rem;display:block;"></i><strong>Catálogo em atualização.</strong><p>Não há produtos publicados com preço e stock confirmados neste momento.</p><a class="btn btn-primary" href="contactos.html">Consultar disponibilidade</a></div>';
       return;
     }
     grid.innerHTML = filtered.map(productCardHTML).join('');
