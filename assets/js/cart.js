@@ -112,16 +112,41 @@
     document.getElementById('cartBackdrop')?.classList.remove('active');
   }
 
-  function saveOrder(method, items, total) {
+  function collectCustomer() {
+    const value = id => String(document.getElementById(id)?.value || '').trim();
+    const customer = {
+      name: value('cartCustomerName'),
+      phone: value('cartCustomerPhone'),
+      email: value('cartCustomerEmail'),
+      address: value('cartCustomerAddress')
+    };
+    if (!customer.name || !customer.phone) {
+      alert('Informe o nome completo e o telefone/WhatsApp para registar o pedido.');
+      return null;
+    }
+    if (customer.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) {
+      alert('O e-mail introduzido não é válido.');
+      return null;
+    }
+    return customer;
+  }
+
+  function createClientRef() {
+    const id = window.crypto?.randomUUID ? window.crypto.randomUUID() : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+    return 'WEB-' + id;
+  }
+
+  function clearCustomerForm() {
+    ['cartCustomerName','cartCustomerPhone','cartCustomerEmail','cartCustomerAddress'].forEach(id => {
+      const field = document.getElementById(id);
+      if (field) field.value = '';
+    });
+  }
+
+  function saveOrder(method, items, total, customer, clientRef) {
     try {
       const orders = JSON.parse(localStorage.getItem(STORAGE_ORDERS) || '[]');
-      orders.push({
-        id: Date.now(),
-        date: new Date().toISOString(),
-        total,
-        method,
-        items
-      });
+      orders.push({ id: Date.now(), date: new Date().toISOString(), total, method, customer, client_ref: clientRef, items });
       localStorage.setItem(STORAGE_ORDERS, JSON.stringify(orders));
     } catch (e) {}
   }
@@ -129,12 +154,15 @@
   async function checkoutWhatsApp() {
     const items = loadCart();
     if (!items.length) { alert('Carrinho vazio'); return; }
+    const customer = collectCustomer();
+    if (!customer) return;
+    const clientRef = createClientRef();
     const popup = window.open('about:blank', '_blank');
     const total = items.reduce((s, i) => s + i.price * i.qty, 0);
     let order = null;
     let localRef = '';
     try {
-      if (window.DPS_CLOUD_STORE) order = await window.DPS_CLOUD_STORE.createOrder('WhatsApp', items);
+      if (window.DPS_CLOUD_STORE) order = await window.DPS_CLOUD_STORE.createOrder('WhatsApp', items, customer, clientRef);
       else throw new Error('Serviço de sincronização indisponível.');
     } catch (error) {
       if (error.status && error.status >= 400 && error.status < 500) {
@@ -142,51 +170,63 @@
         alert(error.message || 'O pedido não foi registado porque o stock ou os produtos mudaram. Atualize o carrinho.');
         return;
       }
-      localRef = window.DPS_CLOUD_STORE?.queueOrder('WhatsApp', items) || ('LOCAL-' + Date.now());
-      saveOrder('WhatsApp - sincronização pendente', items, total);
+      localRef = window.DPS_CLOUD_STORE?.queueOrder('WhatsApp', items, customer, clientRef) || clientRef;
+      saveOrder('WhatsApp - sincronização pendente', items, total, customer, clientRef);
     }
     const reference = order?.order_number || localRef;
-    let msg = '*PEDIDO — D.PEDRO SOLUÇÕES*\\n';
-    if (reference) msg += '*Referência:* ' + reference + '\\n';
-    msg += '\\n';
-    items.forEach(i => { msg += '• ' + i.name + ' (x' + i.qty + ') — ' + fmtKz(i.price * i.qty) + '\\n'; });
-    msg += '\\n*TOTAL APRESENTADO:* ' + fmtKz(total);
-    if (order?.total != null) msg += '\\n*TOTAL VALIDADO NO SERVIDOR:* ' + fmtKz(order.total);
-    msg += '\\n\\nAguardo confirmação de disponibilidade e pagamento.';
+    let msg = '*PEDIDO — D.PEDRO SOLUÇÕES*\n';
+    if (reference) msg += '*Referência:* ' + reference + '\n';
+    msg += '*Cliente:* ' + customer.name + '\n';
+    msg += '*Telefone:* ' + customer.phone + '\n';
+    if (customer.email) msg += '*E-mail:* ' + customer.email + '\n';
+    if (customer.address) msg += '*Entrega:* ' + customer.address + '\n';
+    msg += '\n';
+    items.forEach(i => { msg += '• ' + i.name + ' (x' + i.qty + ') — ' + fmtKz(i.price * i.qty) + '\n'; });
+    msg += '\n*TOTAL APRESENTADO:* ' + fmtKz(total);
+    if (order?.total != null) msg += '\n*TOTAL VALIDADO NO SERVIDOR:* ' + fmtKz(order.total);
+    msg += '\n\nAguardo confirmação de disponibilidade e pagamento.';
     if (typeof gtag === 'function') gtag('event', 'purchase', { value: total, currency: 'AOA' });
     const waUrl = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg);
     if (popup && !popup.closed) popup.location.href = waUrl;
     else window.location.href = waUrl;
     localStorage.removeItem(STORAGE_CART);
+    clearCustomerForm();
     renderCart(); updateBadge(); closeCart();
   }
 
   async function checkoutEmail() {
     const items = loadCart();
     if (!items.length) { alert('Carrinho vazio'); return; }
+    const customer = collectCustomer();
+    if (!customer) return;
+    const clientRef = createClientRef();
     const total = items.reduce((s, i) => s + i.price * i.qty, 0);
     let order = null;
     let localRef = '';
     try {
-      if (window.DPS_CLOUD_STORE) order = await window.DPS_CLOUD_STORE.createOrder('Email', items);
+      if (window.DPS_CLOUD_STORE) order = await window.DPS_CLOUD_STORE.createOrder('Email', items, customer, clientRef);
       else throw new Error('Serviço de sincronização indisponível.');
     } catch (error) {
       if (error.status && error.status >= 400 && error.status < 500) {
         alert(error.message || 'O pedido não foi registado porque o stock ou os produtos mudaram. Atualize o carrinho.');
         return;
       }
-      localRef = window.DPS_CLOUD_STORE?.queueOrder('Email', items) || ('LOCAL-' + Date.now());
-      saveOrder('Email - sincronização pendente', items, total);
+      localRef = window.DPS_CLOUD_STORE?.queueOrder('Email', items, customer, clientRef) || clientRef;
+      saveOrder('Email - sincronização pendente', items, total, customer, clientRef);
     }
-    let body = 'PEDIDO — D.PEDRO SOLUÇÕES\\n';
-    if (order?.order_number || localRef) body += 'Referência: ' + (order?.order_number || localRef) + '\\n';
-    body += '\\n';
-    items.forEach(i => { body += i.name + ' (x' + i.qty + ') — ' + fmtKz(i.price * i.qty) + '\\n'; });
-    body += '\\nTOTAL APRESENTADO: ' + fmtKz(total);
-    if (order?.total != null) body += '\\nTOTAL VALIDADO NO SERVIDOR: ' + fmtKz(order.total);
-    body += '\\n\\nAguardo confirmação de disponibilidade e pagamento.';
+    let body = 'PEDIDO — D.PEDRO SOLUÇÕES\n';
+    if (order?.order_number || localRef) body += 'Referência: ' + (order?.order_number || localRef) + '\n';
+    body += 'Cliente: ' + customer.name + '\nTelefone: ' + customer.phone + '\n';
+    if (customer.email) body += 'E-mail: ' + customer.email + '\n';
+    if (customer.address) body += 'Entrega: ' + customer.address + '\n';
+    body += '\n';
+    items.forEach(i => { body += i.name + ' (x' + i.qty + ') — ' + fmtKz(i.price * i.qty) + '\n'; });
+    body += '\nTOTAL APRESENTADO: ' + fmtKz(total);
+    if (order?.total != null) body += '\nTOTAL VALIDADO NO SERVIDOR: ' + fmtKz(order.total);
+    body += '\n\nAguardo confirmação de disponibilidade e pagamento.';
     window.location.href = 'mailto:' + EMAIL + '?subject=Pedido%20D.PEDRO&body=' + encodeURIComponent(body);
     localStorage.removeItem(STORAGE_CART);
+    clearCustomerForm();
     renderCart(); updateBadge(); closeCart();
   }
 
