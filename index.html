@@ -165,6 +165,17 @@
     <div class="cart-header"><h2><i class="fas fa-shopping-cart"></i> Carrinho</h2><button onclick="closeCart()"><i class="fas fa-times"></i></button></div>
     <div class="cart-items" id="cartItems"></div>
     <div class="cart-footer">
+        <div class="cart-customer-fields">
+            <h3>Dados para contacto e entrega</h3>
+            <label for="cartCustomerName">Nome completo *</label>
+            <input id="cartCustomerName" type="text" autocomplete="name" maxlength="120" placeholder="Nome do cliente" required>
+            <label for="cartCustomerPhone">Telefone / WhatsApp *</label>
+            <input id="cartCustomerPhone" type="tel" autocomplete="tel" maxlength="40" placeholder="+244 ..." required>
+            <label for="cartCustomerEmail">E-mail (opcional)</label>
+            <input id="cartCustomerEmail" type="email" autocomplete="email" maxlength="160" placeholder="cliente@email.com">
+            <label for="cartCustomerAddress">Morada / local de entrega</label>
+            <textarea id="cartCustomerAddress" rows="2" maxlength="500" autocomplete="street-address" placeholder="Bairro, rua, município e referência"></textarea>
+        </div>
         <div class="cart-total"><span>Total:</span><span id="cartTotal">Kz 0</span></div>
         <button class="btn-checkout" onclick="checkoutWhatsApp()"><i class="fab fa-whatsapp"></i> Finalizar WhatsApp</button>
         <button class="btn-checkout email" onclick="checkoutEmail()"><i class="fas fa-envelope"></i> Finalizar Email</button>
