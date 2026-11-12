@@ -50,7 +50,7 @@ function mapCategory(value: unknown) {
 async function authenticate(req: Request, companyId: string, allowedRoles: string[] = ["owner", "admin"]) {
   const authorization = req.headers.get("Authorization") || "";
   if (!authorization.startsWith("Bearer ")) throw new Error("Sessão autenticada obrigatória.");
-  const userClient = createClient(URL, ANON, {
+  const userClient = createClient(SUPABASE_URL, ANON, {
     global: { headers: { Authorization: authorization } },
     auth: { persistSession: false, autoRefreshToken: false }
   });
