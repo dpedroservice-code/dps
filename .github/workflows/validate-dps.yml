@@ -43,3 +43,4 @@ jobs:
         run: |
           deno check supabase/functions/dps-store-bridge/index.ts
           deno check supabase/functions/ks-erp-proxy/index.ts
+          deno check supabase/functions/ks-store-api/index.ts
