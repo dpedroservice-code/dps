@@ -92,11 +92,17 @@
     adminReady = true;
     return true;
   }
-  async function connectKanawa(purpose) {
+  async function connectKanawa(purpose, apiUrl, apiKey) {
     if (!companyId) await initializeAdmin();
     const cleanPurpose = String(purpose || '').trim();
+    const cleanUrl = String(apiUrl || '').trim();
+    const cleanKey = String(apiKey || '').trim();
     if (cleanPurpose.length < 5) throw new Error('Descreva a finalidade da ligação à loja.');
-    return await invoke('connect-api', { purpose: cleanPurpose });
+    if (!/^https:\/\/mhaynctedpyqjxdhdisv\.supabase\.co\/functions\/v1\/ks-store-api\/catalog\/products$/.test(cleanUrl)) {
+      throw new Error('Use o endpoint oficial de catálogo do KanawaSoft.');
+    }
+    if (!/^ks_live_[a-f0-9]{64}$/i.test(cleanKey)) throw new Error('A chave KanawaSoft deve ter o formato ks_live_ seguido de 64 caracteres hexadecimais.');
+    return await invoke('connect-api', { purpose: cleanPurpose, api_url: cleanUrl, api_key: cleanKey });
   }
   async function apiStatus() {
     if (!companyId) await initializeAdmin();
