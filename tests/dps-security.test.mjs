@@ -51,7 +51,7 @@ test("public checkout collects customer data and sends a stable idempotency refe
   assert.match(cart, /collectCustomer/);
   assert.match(cart, /createClientRef/);
   assert.match(cloud, /client_ref: clientRef/);
-  assert.match(cloud, /pending\\.client_ref/);
+  assert.match(cloud, /pending\.client_ref/);
   assert.match(bridge, /customer_name: customerName/);
   assert.match(bridge, /client_ref: clientRef/);
   assert.match(bridge, /replayed: true/);
