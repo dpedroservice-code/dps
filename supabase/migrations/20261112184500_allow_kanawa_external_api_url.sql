@@ -22,7 +22,7 @@ begin
   if p_api_secret is null or length(p_api_secret) < 40 then
     raise exception 'API secret inválido';
   end if;
-  if p_api_url <> 'https://mhaynctedpyqjxdhdisv.supabase.co/functions/v1/ks-store-api/catalog/products' then
+  if p_api_url <> 'https://mhaynctedpyqjxdhdisv.supabase.co/functions/v1/ecommerce-gateway?action=catalog' then
     raise exception 'Endpoint da API não autorizado';
   end if;
   select secret_id into v_secret_id
