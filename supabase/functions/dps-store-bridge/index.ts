@@ -4,14 +4,25 @@ import { createClient } from "npm:@supabase/supabase-js@2.118.0";
 const URL = Deno.env.get("SUPABASE_URL")!;
 const ANON = Deno.env.get("SUPABASE_ANON_KEY")!;
 const SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const KANAWA_ANON = Deno.env.get("KANAWA_SUPABASE_PUBLISHABLE_KEY") ?? "";
 const admin = createClient(URL, SERVICE, { auth: { persistSession: false, autoRefreshToken: false } });
-const COMPANY_ID = "2506d418-4f0f-446a-99c4-a228041a1233";
+const COMPANY_ID = "d2bf8670-0667-4d44-96ab-8fb8280cf089";
+const KANAWA_COMPANY_ID = "9d57ccbb-7957-4dda-b1c8-1a2b745cef7b";
+const ADMIN_EMAIL = "dpedroservice@gmail.com";
+const KANAWA_API_URL = "https://mhaynctedpyqjxdhdisv.supabase.co/functions/v1/ks-store-api/catalog/products";
 const STORE_SLUG = "dpedrosolucoes";
+const ALLOWED_ORIGINS = new Set([
+  "https://dpedrosolucoes.shop",
+  "https://www.dpedrosolucoes.shop",
+  "https://dpedrosolucoeslda.netlify.app"
+]);
 
 function cors(req: Request) {
   const origin = req.headers.get("Origin") || "";
+  const previewOrigin = origin.endsWith("--dpedrosolucoeslda.netlify.app");
+  const allowed = ALLOWED_ORIGINS.has(origin) || previewOrigin || origin === "http://localhost:3000";
   return {
-    "Access-Control-Allow-Origin": origin || "https://dpedrosolucoes.shop",
+    "Access-Control-Allow-Origin": allowed ? origin : "https://dpedrosolucoes.shop",
     "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Content-Type": "application/json",
@@ -45,6 +56,9 @@ async function authenticate(req: Request, companyId: string, allowedRoles: strin
   });
   const { data: auth, error } = await userClient.auth.getUser();
   if (error || !auth.user) throw new Error("Sessão inválida ou expirada.");
+  if (String(auth.user.email || "").trim().toLowerCase() !== ADMIN_EMAIL) {
+    throw new Error("A plataforma D.PEDRO SOLUÇÕES é exclusiva do e-mail administrativo autorizado.");
+  }
   const { data: membership, error: memberError } = await admin.from("ks_company_memberships")
     .select("role,status").eq("company_id", companyId).eq("user_id", auth.user.id)
     .eq("status", "active").maybeSingle();
@@ -78,13 +92,13 @@ async function syncKanawa(req: Request, body: Record<string, unknown>) {
   try {
     apiResponse = await fetch(config.api_url, {
       method: "GET",
-      headers: { "Authorization": "Bearer " + config.api_secret, "apikey": ANON, "Accept": "application/json" }
+      headers: { "Authorization": "Bearer " + config.api_secret, "apikey": KANAWA_ANON, "Accept": "application/json" }
     });
   } catch (_) {
     return json(req, 502, { ok: false, error: "Não foi possível alcançar a API do KanawaSoft." });
   }
   const apiData: any = await apiResponse.json().catch(() => ({}));
-  if (!apiResponse.ok || apiData.success !== true || apiData.company_id !== companyId || !Array.isArray(apiData.products)) {
+  if (!apiResponse.ok || apiData.success !== true || apiData.company_id !== KANAWA_COMPANY_ID || !Array.isArray(apiData.products)) {
     return json(req, 502, { ok: false, error: "A API do KanawaSoft não confirmou a leitura do catálogo.", upstream_status: apiResponse.status });
   }
   await admin.from("dps_store_integrations").update({ last_connected_at: new Date().toISOString() }).eq("company_id", companyId);
@@ -154,51 +168,40 @@ Deno.serve(async (req: Request) => {
 
     if (action === "connect-api") {
       const companyId = String(body.company_id || COMPANY_ID);
-      if (companyId !== COMPANY_ID) return json(req, 403, { ok: false, error: "Empresa não autorizada." });
+      if (companyId !== COMPANY_ID) return json(req, 403, { ok: false, error: "Empresa D.PEDRO não autorizada." });
       const user = await authenticate(req, companyId);
       const purpose = String(body.purpose || "").trim();
-      if (purpose.length < 5 || purpose.length > 240) return json(req, 422, { ok: false, error: "Indique uma finalidade válida para a chave." });
-      const apiName = "D.PEDRO SOLUÇÕES e-Commerce";
-      const origins = ["https://dpedrosolucoes.shop","https://www.dpedrosolucoes.shop","https://dpedrosolucoeslda.netlify.app"];
-      const { data: previous } = await admin.from("dps_store_integrations").select("api_key_id").eq("company_id", companyId).maybeSingle();
-      const authorization = req.headers.get("Authorization") || "";
-      const createResponse = await fetch(URL + "/functions/v1/ks-store-api", {
-        method: "POST",
-        headers: { "Authorization": authorization, "apikey": ANON, "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "create-key", company_id: companyId, name: apiName, purpose, allowed_origins: origins })
-      });
-      const issued: any = await createResponse.json().catch(() => ({}));
-      if (!createResponse.ok || issued.success !== true || !issued.secret || !issued.key?.id || !issued.key?.key_prefix) {
-        return json(req, 502, { ok: false, error: issued.error || "O KanawaSoft não conseguiu emitir a chave de leitura." });
+      const apiUrl = String(body.api_url || "").trim();
+      const apiKey = String(body.api_key || "").trim();
+      if (purpose.length < 5 || purpose.length > 240) return json(req, 422, { ok: false, error: "Indique uma finalidade válida para a integração." });
+      if (apiUrl !== KANAWA_API_URL) return json(req, 422, { ok: false, error: "Endpoint do catálogo KanawaSoft não reconhecido." });
+      if (!/^ks_live_[a-f0-9]{64}$/i.test(apiKey)) return json(req, 422, { ok: false, error: "A chave API não tem o formato esperado." });
+      if (!KANAWA_ANON) return json(req, 503, { ok: false, error: "Falta configurar a chave pública do projeto KanawaSoft no servidor D.PEDRO." });
+      let validation: Response;
+      try {
+        validation = await fetch(apiUrl, {
+          method: "GET",
+          headers: { "Authorization": "Bearer " + apiKey, "apikey": KANAWA_ANON, "Accept": "application/json" }
+        });
+      } catch (_) {
+        return json(req, 502, { ok: false, error: "Não foi possível contactar o endpoint do KanawaSoft." });
       }
-      const apiUrl = URL + "/functions/v1/ks-store-api/catalog/products";
+      const checked: any = await validation.json().catch(() => ({}));
+      if (!validation.ok || checked.success !== true || checked.company_id !== KANAWA_COMPANY_ID || !Array.isArray(checked.products)) {
+        return json(req, 401, { ok: false, error: "A chave não foi validada para a empresa D.PEDRO SOLUÇÕES no KanawaSoft.", upstream_status: validation.status });
+      }
+      const apiName = "D.PEDRO SOLUÇÕES e-Commerce";
+      const keyPrefix = apiKey.slice(0, 20);
       const { data: secretId, error: saveError } = await admin.rpc("dps_store_save_api_integration", {
         p_company_id: companyId, p_api_name: apiName, p_api_url: apiUrl, p_purpose: purpose,
-        p_api_key_id: issued.key.id, p_api_key_prefix: issued.key.key_prefix,
-        p_api_secret: issued.secret, p_created_by: user.id
+        p_api_key_id: null, p_api_key_prefix: keyPrefix,
+        p_api_secret: apiKey, p_created_by: user.id
       });
-      if (saveError || !secretId) {
-        await fetch(URL + "/functions/v1/ks-store-api", {
-          method: "POST",
-          headers: { "Authorization": authorization, "apikey": ANON, "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "revoke-key", company_id: companyId, key_id: issued.key.id })
-        }).catch(() => {});
-        return json(req, 500, { ok: false, error: "A chave foi emitida, mas não foi possível guardá-la no Supabase Vault. A chave nova foi revogada." });
-      }
-      let previousRevoked = true;
-      if (previous?.api_key_id && previous.api_key_id !== issued.key.id) {
-        try {
-          const revokeResponse = await fetch(URL + "/functions/v1/ks-store-api", {
-            method: "POST",
-            headers: { "Authorization": authorization, "apikey": ANON, "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "revoke-key", company_id: companyId, key_id: previous.api_key_id })
-          });
-          previousRevoked = revokeResponse.ok;
-        } catch (_) { previousRevoked = false; }
-      }
+      if (saveError || !secretId) return json(req, 500, { ok: false, error: "A chave foi validada, mas não foi possível guardá-la no Supabase Vault." });
       return json(req, 200, {
-        ok: true, api_name: apiName, api_url: apiUrl, api_key_prefix: issued.key.key_prefix,
-        purpose, secret_stored_securely: true, previous_key_revoked: previousRevoked
+        ok: true, api_name: apiName, api_url: apiUrl, api_key_prefix: keyPrefix,
+        purpose, secret_stored_securely: true, remote_company_id: KANAWA_COMPANY_ID,
+        message: "Chave validada no KanawaSoft e guardada no Vault. O segredo não é devolvido."
       });
     }
 
