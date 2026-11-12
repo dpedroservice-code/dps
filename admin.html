@@ -125,9 +125,9 @@
 
         <div style="background:var(--card);padding:1.5rem;border-radius:var(--radius);margin:1rem 0;">
             <h3 style="margin-bottom:1rem;color:var(--text);">🔐 Ligação segura ao ERP</h3>
-            <p style="color:var(--text-muted);margin-bottom:1rem;">Gere primeiro uma chave de leitura no KanawaSoft, associada à empresa D.PEDRO SOLUÇÕES. Cole aqui o endpoint e a chave. O servidor valida a empresa remota, guarda o segredo no Supabase Vault e limpa o campo do navegador. A sincronização importa produtos para revisão; não publica automaticamente. Não use uma chave de administrador nem uma chave de service_role.</p>
+            <p style="color:var(--text-muted);margin-bottom:1rem;">No KanawaSoft, abra Integrações API e gere uma chave para a empresa D.PEDRO SOLUÇÕES com as permissões catalog:read e orders:write. Cole aqui o endpoint e a chave. O servidor valida a empresa remota, guarda o segredo no Supabase Vault e limpa o campo do navegador. Nunca use uma chave de service_role.</p>
             <label for="kanawaApiUrl" style="display:block;margin:.7rem 0 .35rem;font-weight:700;">Endpoint do catálogo KanawaSoft</label>
-            <input id="kanawaApiUrl" type="url" value="https://mhaynctedpyqjxdhdisv.supabase.co/functions/v1/ks-store-api/catalog/products" autocomplete="url" style="width:100%;padding:.8rem;border:1px solid var(--border);border-radius:.6rem;background:var(--bg);color:var(--text);margin-bottom:.8rem;">
+            <input id="kanawaApiUrl" type="url" value="https://mhaynctedpyqjxdhdisv.supabase.co/functions/v1/ecommerce-gateway?action=catalog" autocomplete="url" style="width:100%;padding:.8rem;border:1px solid var(--border);border-radius:.6rem;background:var(--bg);color:var(--text);margin-bottom:.8rem;">
             <label for="kanawaApiKey" style="display:block;margin:.7rem 0 .35rem;font-weight:700;">Chave de API KanawaSoft</label>
             <input id="kanawaApiKey" type="password" autocomplete="new-password" spellcheck="false" placeholder="ks_live_…" style="width:100%;padding:.8rem;border:1px solid var(--border);border-radius:.6rem;background:var(--bg);color:var(--text);margin-bottom:.8rem;">
             <label for="kanawaApiPurpose" style="display:block;margin:.7rem 0 .35rem;font-weight:700;">Finalidade da integração</label>
