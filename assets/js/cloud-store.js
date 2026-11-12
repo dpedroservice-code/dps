@@ -61,13 +61,15 @@
   async function loadOrders() {
     if (!window.DPAuth?.client || !companyId) return [];
     const { data, error } = await window.DPAuth.client.from('dps_store_orders')
-      .select('id,order_number,status,payment_status,payment_method,total,created_at,dps_store_order_items(product_name,quantity,unit_price,line_total)')
+      .select('id,order_number,status,payment_status,payment_method,total,created_at,customer_name,customer_phone,customer_email,customer_address,notes,client_ref,dps_store_order_items(product_name,quantity,unit_price,line_total)')
       .eq('company_id', companyId).order('created_at', { ascending: false }).limit(200);
     if (error) throw new Error(error.message || 'Não foi possível carregar os pedidos partilhados.');
     const orders = (data || []).map(o => ({
       id: o.id, order_number: o.order_number, status: o.status,
       payment_status: o.payment_status, method: o.payment_method,
-      total: Number(o.total) || 0, date: o.created_at,
+      customer_name: o.customer_name, customer_phone: o.customer_phone,
+      customer_email: o.customer_email, customer_address: o.customer_address, notes: o.notes,
+      client_ref: o.client_ref, total: Number(o.total) || 0, date: o.created_at,
       items: (o.dps_store_order_items || []).map(i => ({
         name: i.product_name, qty: Number(i.quantity), price: Number(i.unit_price)
       }))
@@ -147,11 +149,19 @@
     await loadAdminProducts();
     return true;
   }
-  async function createOrder(method, items) {
+  function makeClientRef() {
+    const id = window.crypto?.randomUUID ? window.crypto.randomUUID() : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+    return 'WEB-' + id;
+  }
+  async function createOrder(method, items, customer = {}, clientRef = makeClientRef()) {
     if (!API) throw new Error('Serviço da loja indisponível.');
     const response = await fetch(API, {
       method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ action: 'create-order', store_slug: STORE, payment_method: method, items: items.map(i => ({ product_id: String(i.id), quantity: Number(i.qty) })) })
+      body: JSON.stringify({
+        action: 'create-order', store_slug: STORE, payment_method: method,
+        client_ref: clientRef, customer,
+        items: items.map(i => ({ product_id: String(i.id), quantity: Number(i.qty) }))
+      })
     });
     const result = await response.json().catch(() => ({}));
     if (!response.ok || result.ok !== true) {
@@ -161,12 +171,12 @@
     }
     return result.order;
   }
-  function queueOrder(method, items) {
+  function queueOrder(method, items, customer = {}, clientRef = makeClientRef()) {
     const key = 'dpedro_orders_pending';
     let queue = [];
     try { queue = JSON.parse(localStorage.getItem(key) || '[]'); } catch (_) {}
     const localRef = 'LOCAL-' + Date.now();
-    queue.push({ local_ref: localRef, method, items, queued_at: new Date().toISOString() });
+    queue.push({ local_ref: localRef, client_ref: clientRef, method, items, customer, queued_at: new Date().toISOString() });
     localStorage.setItem(key, JSON.stringify(queue.slice(-100)));
     return localRef;
   }
@@ -177,7 +187,7 @@
     const remaining = [];
     let sent = 0;
     for (const pending of queue) {
-      try { await createOrder(pending.method, pending.items); sent++; }
+      try { await createOrder(pending.method, pending.items, pending.customer || {}, pending.client_ref || makeClientRef()); sent++; }
       catch (error) { remaining.push(pending); }
     }
     localStorage.setItem('dpedro_orders_pending', JSON.stringify(remaining));
