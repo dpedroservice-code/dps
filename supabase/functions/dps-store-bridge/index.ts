@@ -85,6 +85,7 @@ async function syncKanawa(req: Request, body: Record<string, unknown>) {
   const started = new Date().toISOString();
   const { data: configRows, error: configError } = await admin.rpc("dps_store_get_api_integration", { p_company_id: companyId });
   const config: any = Array.isArray(configRows) ? configRows[0] : configRows;
+  if (!KANAWA_ANON) return json(req, 503, { ok: false, error: "Falta configurar KANAWA_SUPABASE_PUBLISHABLE_KEY nos segredos da função D.PEDRO." });
   if (configError || !config?.api_url || !config?.api_secret) {
     return json(req, 409, { ok: false, error: "A API do KanawaSoft ainda não está ligada. Use primeiro «Ligar API KanawaSoft»." });
   }
