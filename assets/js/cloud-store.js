@@ -98,10 +98,10 @@
     const cleanUrl = String(apiUrl || '').trim();
     const cleanKey = String(apiKey || '').trim();
     if (cleanPurpose.length < 5) throw new Error('Descreva a finalidade da ligação à loja.');
-    if (!/^https:\/\/mhaynctedpyqjxdhdisv\.supabase\.co\/functions\/v1\/ks-store-api\/catalog\/products$/.test(cleanUrl)) {
-      throw new Error('Use o endpoint oficial de catálogo do KanawaSoft.');
+    if (cleanUrl !== 'https://mhaynctedpyqjxdhdisv.supabase.co/functions/v1/ecommerce-gateway?action=catalog') {
+      throw new Error('Use o endpoint oficial do gateway e-Commerce do KanawaSoft.');
     }
-    if (!/^ks_live_[a-f0-9]{64}$/i.test(cleanKey)) throw new Error('A chave KanawaSoft deve ter o formato ks_live_ seguido de 64 caracteres hexadecimais.');
+    if (!/^ks_live_[A-Za-z0-9]{32,43}$/.test(cleanKey)) throw new Error('A chave KanawaSoft deve começar por ks_live_ e conter a chave gerada no ERP.');
     return await invoke('connect-api', { purpose: cleanPurpose, api_url: cleanUrl, api_key: cleanKey });
   }
   async function apiStatus() {
