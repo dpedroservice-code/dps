@@ -43,3 +43,22 @@ test("storefront migration seeds only the verified D.PEDRO company and endpoint"
   assert.match(migration, /mhaynctedpyqjxdhdisv\.supabase\.co\/functions\/v1\/ecommerce-gateway\?action=catalog/);
   assert.match(migration, /on conflict \(slug\) do update/);
 });
+
+test("public checkout collects customer data and sends a stable idempotency reference", async () => {
+  const cart = await read("../assets/js/cart.js");
+  const cloud = await read("../assets/js/cloud-store.js");
+  const bridge = await read("../supabase/functions/dps-store-bridge/index.ts");
+  assert.match(cart, /collectCustomer/);
+  assert.match(cart, /createClientRef/);
+  assert.match(cloud, /client_ref: clientRef/);
+  assert.match(cloud, /pending\\.client_ref/);
+  assert.match(bridge, /customer_name: customerName/);
+  assert.match(bridge, /client_ref: clientRef/);
+  assert.match(bridge, /replayed: true/);
+});
+
+test("D.PEDRO orders have a unique per-company idempotency key", async () => {
+  const migration = await read("../supabase/migrations/20261112184500_allow_kanawa_external_api_url.sql");
+  assert.match(migration, /add column if not exists client_ref text/);
+  assert.match(migration, /dps_store_orders_company_client_ref_uq/);
+});
