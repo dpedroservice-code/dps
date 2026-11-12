@@ -216,6 +216,20 @@ Deno.serve(async (req: Request) => {
 
     if (action === "create-order") {
       const store = await getStore(String(body.store_slug || STORE_SLUG), req);
+      const clientRef = String(body.client_ref || "").trim().slice(0, 100);
+      const customer = body.customer && typeof body.customer === "object" ? body.customer : {};
+      const customerName = String(customer.name || "").trim().slice(0, 120);
+      const customerPhone = String(customer.phone || "").trim().slice(0, 40);
+      const customerEmail = String(customer.email || "").trim().slice(0, 160);
+      const customerAddress = String(customer.address || "").trim().slice(0, 500);
+      const customerNotes = String(customer.notes || "").trim().slice(0, 500);
+      if (!/^[A-Za-z0-9_-]{8,100}$/.test(clientRef)) return json(req, 422, { ok: false, error: "Referência de pedido inválida." });
+      if (!customerName || customerPhone.length < 7) return json(req, 422, { ok: false, error: "Nome e telefone do cliente são obrigatórios." });
+      if (customerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) return json(req, 422, { ok: false, error: "E-mail do cliente inválido." });
+      const { data: existing, error: existingError } = await admin.from("dps_store_orders")
+        .select("id,order_number,status,total").eq("company_id", store.company_id).eq("client_ref", clientRef).maybeSingle();
+      if (existingError) return json(req, 500, { ok: false, error: "Não foi possível verificar a referência do pedido." });
+      if (existing) return json(req, 200, { ok: true, order: existing, replayed: true });
       const input = Array.isArray(body.items) ? body.items.slice(0, 40) : [];
       if (!input.length) return json(req, 422, { ok: false, error: "O carrinho está vazio." });
       const quantities = new Map<string, number>();
@@ -237,19 +251,33 @@ Deno.serve(async (req: Request) => {
         return { company_id: store.company_id, product_id: p.id, source_product_id: p.source_product_id, product_name: p.name, sku: p.sku, quantity, unit_price: unitPrice, line_total: Number((quantity * unitPrice).toFixed(2)) };
       });
       const subtotal = Number(items.reduce((sum: number, item: any) => sum + item.line_total, 0).toFixed(2));
+      const sourcePayload = {
+        channel: "website", client_ref: clientRef, customer: { name: customerName, phone: customerPhone, email: customerEmail, address: customerAddress },
+        stock_reserved: false, erp_sync_status: "not_configured"
+      };
       const { data: order, error: orderError } = await admin.from("dps_store_orders").insert({
-        company_id: store.company_id, payment_method: String(body.payment_method || "WhatsApp").slice(0, 40),
-        status: "awaiting_contact", payment_status: "not_paid", subtotal, total: subtotal,
-        source_payload: { channel: "website", stock_reserved: false }
-      }).select("id,order_number,status,total").single();
-      if (orderError || !order) return json(req, 500, { ok: false, error: "Não foi possível registar o pedido." });
+        company_id: store.company_id, client_ref: clientRef,
+        payment_method: String(body.payment_method || "WhatsApp").slice(0, 40),
+        status: "awaiting_contact", payment_status: "not_paid",
+        customer_name: customerName, customer_phone: customerPhone, customer_email: customerEmail || null,
+        customer_address: customerAddress || null, notes: customerNotes || null,
+        subtotal, total: subtotal, source_payload: sourcePayload
+      }).select("id,order_number,status,total,customer_name,customer_phone").single();
+      if (orderError || !order) {
+        if (orderError?.code === "23505") {
+          const { data: duplicate } = await admin.from("dps_store_orders").select("id,order_number,status,total")
+            .eq("company_id", store.company_id).eq("client_ref", clientRef).maybeSingle();
+          if (duplicate) return json(req, 200, { ok: true, order: duplicate, replayed: true });
+        }
+        return json(req, 500, { ok: false, error: "Não foi possível registar o pedido." });
+      }
       const itemRows = items.map((item: any) => ({ ...item, order_id: order.id }));
       const { error: itemError } = await admin.from("dps_store_order_items").insert(itemRows);
       if (itemError) {
         await admin.from("dps_store_orders").delete().eq("id", order.id).eq("company_id", store.company_id);
         return json(req, 500, { ok: false, error: "O pedido não pôde ser concluído." });
       }
-      return json(req, 201, { ok: true, order });
+      return json(req, 201, { ok: true, order, erp_sync_status: "not_configured" });
     }
 
     const companyId = String(body.company_id || COMPANY_ID);
