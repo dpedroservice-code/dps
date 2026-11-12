@@ -430,7 +430,12 @@
       '<small style="color:var(--text-muted)">' + escapeHtml(new Date(o.date).toLocaleString('pt-AO')) + '</small>' +
       '<span style="color:var(--success);font-weight:700;">' + window.DPEDRO_DB.fmtKz(o.total) + '</span>' +
       '<span>' + escapeHtml(o.status || 'pending') + ' · ' + escapeHtml(o.payment_status || 'not_paid') + '</span></div>' +
-      '<div style="font-size:.85rem;color:var(--text-muted);">' +
+      '<div style="font-size:.85rem;color:var(--text-muted);margin-bottom:.5rem;">' +
+      (o.customer_name ? '<strong>Cliente:</strong> ' + escapeHtml(o.customer_name) + ' · ' : '') +
+      (o.customer_phone ? '<strong>Telefone:</strong> ' + escapeHtml(o.customer_phone) + '<br>' : '') +
+      (o.customer_email ? '<strong>E-mail:</strong> ' + escapeHtml(o.customer_email) + '<br>' : '') +
+      (o.customer_address ? '<strong>Entrega:</strong> ' + escapeHtml(o.customer_address) + '<br>' : '') +
+      '</div><div style="font-size:.85rem;color:var(--text-muted);">' +
       (o.items || []).map(i => '• ' + escapeHtml(i.name) + ' (x' + escapeHtml(String(i.qty)) + ') - ' + window.DPEDRO_DB.fmtKz(Number(i.price) * Number(i.qty))).join('<br>') +
       '</div></div>').join('');
   }
