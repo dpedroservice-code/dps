@@ -669,3 +669,13 @@ footer {
   #navToggle { display: none !important; }
   .nav-menu { display: flex !important; }
 }
+
+
+/* Dados de contacto no checkout da loja */
+.cart-customer-fields{display:grid;gap:.45rem;margin:.75rem 0;padding:.85rem;border:1px solid var(--border);border-radius:.85rem;background:var(--bg)}
+.cart-customer-fields h3{font-size:.95rem;margin:0 0 .25rem;color:var(--text)}
+.cart-customer-fields label{font-size:.78rem;font-weight:700;color:var(--text-muted);margin-top:.2rem}
+.cart-customer-fields input,.cart-customer-fields textarea{width:100%;min-width:0;padding:.7rem .75rem;border:1px solid var(--border);border-radius:.55rem;background:var(--surface,#fff);color:var(--text);font:inherit;font-size:.9rem}
+.cart-customer-fields input:focus,.cart-customer-fields textarea:focus{outline:2px solid var(--primary);outline-offset:1px}
+.cart-customer-fields textarea{resize:vertical}
+.cart-drawer{max-height:100dvh;overflow-y:auto}
