@@ -61,6 +61,7 @@
     email = normalizeEmail(email);
     if (name.length < 2) throw new Error('Introduza o nome completo.');
     if (!validEmail(email)) throw new Error('Introduza um endereço de e-mail válido.');
+    requireAdminEmail(email);
     if (String(password || '').length < 10) throw new Error('A palavra-passe deve ter pelo menos 10 caracteres.');
     const { data, error } = await client.auth.signUp({
       email, password,
@@ -74,6 +75,7 @@
     email = normalizeEmail(email);
     token = String(token || '').replace(/\D/g, '');
     if (!validEmail(email) || !/^\d{6}$/.test(token)) throw new Error('E-mail ou código inválido.');
+    requireAdminEmail(email);
     const { data, error } = await client.auth.verifyOtp({ email, token, type: 'signup' });
     if (error) throw new Error(cleanError(error));
     if (!data.session) throw new Error('Confirmação recebida, mas não foi criada uma sessão. Tente entrar.');
@@ -83,6 +85,7 @@
   async function resendRegistrationCode(email) {
     email = normalizeEmail(email);
     if (!validEmail(email)) throw new Error('E-mail inválido.');
+    requireAdminEmail(email);
     const { error } = await client.auth.resend({ type: 'signup', email });
     if (error) throw new Error(cleanError(error));
     return true;
@@ -91,6 +94,7 @@
   async function requestPasswordReset(email) {
     email = normalizeEmail(email);
     if (!validEmail(email)) throw new Error('Introduza um endereço de e-mail válido.');
+    requireAdminEmail(email);
     const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: redirect('reset-password.html') });
     if (error) throw new Error(cleanError(error));
     return true;
@@ -141,6 +145,10 @@
     const user = await getUser().catch(() => null);
     if (!user) {
       window.location.replace('login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop() || 'index.html'));
+      return false;
+    }
+    if (normalizeEmail(user.email) !== ADMIN_EMAIL) {
+      document.body.innerHTML = '<main style="max-width:620px;margin:10vh auto;padding:28px;font:16px system-ui;text-align:center"><h1>Acesso não autorizado</h1><p>Esta plataforma administrativa é exclusiva do e-mail autorizado da D.PEDRO SOLUÇÕES.</p></main>';
       return false;
     }
     const membership = await getActiveMembership().catch(() => null);
