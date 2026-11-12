@@ -1,5 +1,7 @@
 name: Validate D.PEDRO site and integration
 on:
+  push:
+    branches: [work/dps-integration-correction-2026-11-12]
   pull_request:
     branches: [main]
     paths:
