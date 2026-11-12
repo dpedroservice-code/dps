@@ -1,11 +1,11 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.118.0";
 
-const URL = Deno.env.get("SUPABASE_URL")!;
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const ANON = Deno.env.get("SUPABASE_ANON_KEY")!;
 const SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const KANAWA_ANON = Deno.env.get("KANAWA_SUPABASE_PUBLISHABLE_KEY") ?? "";
-const admin = createClient(URL, SERVICE, { auth: { persistSession: false, autoRefreshToken: false } });
+const admin = createClient(SUPABASE_URL, SERVICE, { auth: { persistSession: false, autoRefreshToken: false } });
 const COMPANY_ID = "d2bf8670-0667-4d44-96ab-8fb8280cf089";
 const KANAWA_COMPANY_ID = "9d57ccbb-7957-4dda-b1c8-1a2b745cef7b";
 const ADMIN_EMAIL = "dpedroservice@gmail.com";
