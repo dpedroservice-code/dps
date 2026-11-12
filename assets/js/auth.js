@@ -16,7 +16,13 @@
   });
 
   const redirect = (path) => new URL(path, window.location.href).toString();
+  const ADMIN_EMAIL = 'dpedroservice@gmail.com';
   const normalizeEmail = (email) => String(email || '').trim().toLowerCase();
+  const requireAdminEmail = (email) => {
+    if (normalizeEmail(email) !== ADMIN_EMAIL) {
+      throw new Error('Esta plataforma administrativa é exclusiva do e-mail autorizado da D.PEDRO SOLUÇÕES.');
+    }
+  };
   const validEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const cleanError = (error) => {
     const message = error?.message || 'Não foi possível concluir a operação.';
@@ -29,6 +35,7 @@
   async function sendLoginCode(email) {
     email = normalizeEmail(email);
     if (!validEmail(email)) throw new Error('Introduza um endereço de e-mail válido.');
+    requireAdminEmail(email);
     const { error } = await client.auth.signInWithOtp({ email, options: { shouldCreateUser: false } });
     if (error) throw new Error(cleanError(error));
     return { email, message: 'Código enviado. Consulte a caixa de entrada e o spam.' };
@@ -38,6 +45,7 @@
     email = normalizeEmail(email);
     token = String(token || '').replace(/\D/g, '');
     if (!validEmail(email)) throw new Error('E-mail inválido.');
+    requireAdminEmail(email);
     if (!/^\d{6}$/.test(token)) throw new Error('O código deve conter exatamente seis dígitos.');
     const { data, error } = await client.auth.verifyOtp({ email, token, type: 'email' });
     if (error) throw new Error(cleanError(error));
@@ -144,6 +152,7 @@
   }
 
   function isAdmin(user) {
+    if (normalizeEmail(user?.email) !== ADMIN_EMAIL) return false;
     const app = user?.app_metadata || {};
     return app.role === 'admin' || (Array.isArray(app.roles) && app.roles.includes('admin'));
   }
@@ -152,6 +161,11 @@
     const user = await getUser().catch(() => null);
     if (!user) {
       window.location.replace('login.html?next=' + encodeURIComponent('admin.html'));
+      return false;
+    }
+    if (normalizeEmail(user.email) !== ADMIN_EMAIL) {
+      await signOut().catch(() => {});
+      document.body.innerHTML = '<main style="max-width:620px;margin:10vh auto;padding:28px;font:16px system-ui;text-align:center"><h1>Acesso não autorizado</h1><p>Esta plataforma administrativa é exclusiva do e-mail autorizado da D.PEDRO SOLUÇÕES.</p></main>';
       return false;
     }
     if (isAdmin(user)) return true;
