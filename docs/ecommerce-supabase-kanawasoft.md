@@ -1,45 +1,54 @@
-# Integração e-Commerce D.PEDRO ↔ KanawaSoft 1.2.0
+# Integração e-Commerce D.PEDRO ↔ KanawaSoft
 
-## Fluxo
+## Separação dos ambientes
 
-1. No painel D.PEDRO, um administrador autenticado escolhe **Ligar / emitir chave de API**.
-2. A função `ks-store-api` emite uma chave exclusiva para D.PEDRO, com escopo de leitura do catálogo e finalidade registada.
-3. A própria função `dps-store-bridge` solicita a chave ao KanawaSoft, recebe o segredo no servidor e guarda-o no Supabase Vault. O segredo nunca é devolvido ao navegador nem gravado no localStorage.
-4. A sincronização consulta o endpoint `/functions/v1/ks-store-api/catalog/products` em modo somente leitura.
-5. Os registos são copiados para `dps_store_products`. Produtos novos entram como rascunho.
-6. O administrador filtra por categoria, origem, estado ou pesquisa, revê o catálogo e publica os produtos escolhidos.
-7. A loja pública só recebe produtos ativos e publicados.
-8. Os pedidos são validados no servidor contra o preço e o stock atuais e guardados em `dps_store_orders` e `dps_store_order_items`.
+- Supabase D.PEDRO (loja, autenticação administrativa e pedidos): `jiehrswweoyesbabrpjf`.
+- Supabase KanawaSoft (ERP e catálogo de origem): `mhaynctedpyqjxdhdisv`.
+- Empresa D.PEDRO no projecto da loja: `d2bf8670-0667-4d44-96ab-8fb8280cf089`.
+- Empresa D.PEDRO no KanawaSoft: `9d57ccbb-7957-4dda-b1c8-1a2b745cef7b`.
+- Conta administrativa autorizada: `dpedroservice@gmail.com`.
 
-## Tabelas Supabase
+Os dois projectos têm IDs de empresa diferentes. Nunca reutilizar o UUID da empresa D.PEDRO no Supabase da loja como se fosse o UUID da empresa no ERP.
+
+## Fluxo correcto de catálogo
+
+1. No KanawaSoft, um administrador da empresa D.PEDRO SOLUÇÕES gera uma chave de API com escopo somente de leitura do catálogo.
+2. A função `ks-store-api` tem de estar publicada no projecto Supabase do KanawaSoft, não no projecto Supabase da loja D.PEDRO.
+3. No painel D.PEDRO, o administrador introduz o endpoint oficial e a chave `ks_live_...`.
+4. A função `dps-store-bridge` valida a chave no endpoint remoto e confirma que a resposta pertence à empresa D.PEDRO no KanawaSoft.
+5. A chave é guardada no Vault do projecto D.PEDRO; não é devolvida ao browser nem guardada em localStorage.
+6. A sincronização importa os produtos para `dps_store_products` com o UUID local da empresa D.PEDRO. Produtos novos entram como rascunho.
+7. O administrador revê e publica os produtos. A loja pública só apresenta produtos activos e publicados.
+
+## Configuração de servidor necessária
+
+No projecto Supabase D.PEDRO, configurar o segredo da função `dps-store-bridge`:
+
+- `KANAWA_SUPABASE_PUBLISHABLE_KEY`: publishable key do projecto KanawaSoft.
+
+Nunca colocar service_role, segredo privado ou API key Kanawa em ficheiros JavaScript públicos.
+
+## Tabelas da loja
 
 - `dps_storefronts`: slug público e origens autorizadas.
-- `dps_store_products`: catálogo manual e catálogo importado, com origem, preço, stock e estado de publicação.
+- `dps_store_products`: catálogo manual e importado.
 - `dps_store_orders` e `dps_store_order_items`: pedidos partilhados entre dispositivos.
 - `dps_store_sync_runs`: histórico de sincronização.
-- `dps_store_integrations`: metadados da ligação API; o segredo fica no Vault, não nesta tabela.
+- `dps_store_integrations`: metadados da integração; o segredo fica no Vault.
 
-As tabelas de catálogo e pedidos têm RLS e políticas por empresa. As tabelas de configuração/segredo não são acessíveis diretamente por clientes anon/authenticated. O Realtime está ativado para catálogo e pedidos.
+A migração `20261112184500_allow_kanawa_external_catalog_api.sql` prepara a URL externa autorizada e cria o registo da loja. **Ainda não deve ser aplicada ao projecto activo sem autorização e teste num ambiente isolado.**
 
-## Funções Edge
+## Estado verificado e limitações
 
-- `ks-store-api`: API do KanawaSoft; a verificação do hash da chave foi corrigida para calcular o hash do token recebido.
-- `dps-store-bridge`: emissão/configuração segura, estado da ligação, sincronização, publicação, catálogo público e criação de pedidos.
+- A base de dados D.PEDRO tem um único membro activo com perfil `owner`, associado ao e-mail autorizado.
+- O código anterior tentava contactar `ks-store-api` no próprio projecto D.PEDRO e usava um UUID de empresa que não corresponde ao registo real. Essa ligação não podia funcionar com o ERP principal.
+- A correcção de código separa o UUID local D.PEDRO do UUID remoto KanawaSoft e exige uma chave API emitida no ERP.
+- A função `ks-store-api` ainda precisa de ser publicada no projecto KanawaSoft e de uma interface no ERP para emitir/revogar chaves.
+- O catálogo da loja está vazio até existir uma sincronização real de produtos.
+- Os pedidos ficam guardados no projecto D.PEDRO; **ainda não são convertidos em encomendas/vendas no KanawaSoft**.
+- A criação de pedidos não reserva stock no ERP. Antes de activar checkout real, é necessário criar endpoint idempotente no ERP, validar stock/preço e decidir a reserva temporária.
+- Não há gateway de pagamento live nem API de mapas/rotas configurada. Nenhuma chave paga foi comprada ou activada.
 
-## Regras de negócio
+## Segurança do painel D.PEDRO
 
-- A sincronização é unidirecional: KanawaSoft → loja D.PEDRO. Não escreve no ERP.
-- Preço e stock de produtos KanawaSoft são atualizados a partir da API. Para alterar esses valores, editar no ERP e sincronizar novamente.
-- O estado de publicação é preservado nas sincronizações; produtos novos ficam em rascunho.
-- Produtos que deixam de aparecer numa resposta não vazia da API são desativados e retirados da loja; não são apagados.
-- Produtos manuais permanecem separados dos produtos importados.
-- A validação do pedido não reserva nem baixa stock. O pedido fica em estado awaiting_contact e pagamento not_paid até confirmação humana. Não há gateway de pagamento ativo nesta integração.
-- Se o navegador estiver offline durante um checkout, o pedido fica numa fila local para nova tentativa quando a ligação regressar; até ser aceite pelo servidor, não está partilhado entre dispositivos.
-
-## Configuração atual e validação pendente
-
-- Empresa associada: D.PEDRO SOLUÇÕES.
-- Slug da loja: `dpedrosolucoes`.
-- A chave API é emitida quando o administrador usar o botão no painel; não foi criada automaticamente.
-- Na última verificação, `ks_products` não tinha produtos ativos para esta empresa. Portanto, a sincronização ainda não pôde validar uma importação real de produtos.
-- Faltam testes reais em browser/telemóvel, confirmação visual do catálogo e um checkout de teste controlado.
+O acesso ao painel administrativo fica restrito ao e-mail `dpedroservice@gmail.com`, com verificação OTP e confirmação adicional no servidor. O Deploy Preview desliga a ligação ao Supabase real para impedir que testes públicos alterem dados de produção.
