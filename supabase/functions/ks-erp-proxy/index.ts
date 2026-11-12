@@ -5,6 +5,7 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const ERP_API_BASE_URL = Deno.env.get("ERP_API_BASE_URL") ?? "";
 const ERP_API_KEY = Deno.env.get("ERP_API_KEY") ?? "";
 const ERP_API_STORE_ID = Deno.env.get("ERP_API_STORE_ID") ?? "";
+const ADMIN_EMAIL = "dpedroservice@gmail.com";
 
 const ALLOWED_ORIGINS = new Set([
   "https://dpedrosolucoes.shop",
@@ -33,13 +34,17 @@ const EVENTS = {
   }
 };
 
+function isAllowedOrigin(origin: string) {
+  return ALLOWED_ORIGINS.has(origin) || origin.endsWith("--dpedrosolucoeslda.netlify.app");
+}
+
 function json(status: number, body: Record<string, unknown>, origin: string) {
   return new Response(status === 204 ? null : JSON.stringify(body), {
     status,
     headers: {
       "Content-Type": "application/json",
       "Cache-Control": "no-store",
-      "Access-Control-Allow-Origin": ALLOWED_ORIGINS.has(origin) ? origin : "https://dpedrosolucoes.shop",
+      "Access-Control-Allow-Origin": isAllowedOrigin(origin) ? origin : "https://dpedrosolucoes.shop",
       "Access-Control-Allow-Headers": "authorization, apikey, content-type",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Vary": "Origin"
@@ -56,7 +61,7 @@ Deno.serve(async (req: Request) => {
   const origin = req.headers.get("origin") ?? "";
   if (req.method === "OPTIONS") return json(204, {}, origin);
   if (req.method !== "POST") return json(405, { error: "Método não permitido." }, origin);
-  if (origin && !ALLOWED_ORIGINS.has(origin)) return json(403, { error: "Origem não autorizada." }, origin);
+  if (origin && !isAllowedOrigin(origin)) return json(403, { error: "Origem não autorizada." }, origin);
 
   const authorization = req.headers.get("authorization") ?? "";
   const token = authorization.replace(/^Bearer\s+/i, "").trim();
@@ -98,6 +103,9 @@ Deno.serve(async (req: Request) => {
     });
     const { data: authData, error: authError } = await admin.auth.getUser(token);
     if (authError || !authData.user) return json(401, { error: "Sessão inválida ou expirada." }, origin);
+    if (String(authData.user.email || "").trim().toLowerCase() !== ADMIN_EMAIL) {
+      return json(403, { error: "A plataforma D.PEDRO SOLUÇÕES é exclusiva do e-mail administrativo autorizado." }, origin);
+    }
 
     const userId = authData.user.id;
     const { data: membership, error: membershipError } = await admin
