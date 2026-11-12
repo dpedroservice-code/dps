@@ -362,11 +362,15 @@
   async function connectKanawa() {
     const status = document.getElementById('erpConnectionStatus');
     const purpose = document.getElementById('kanawaApiPurpose')?.value || '';
-    if (status) status.textContent = 'A emitir a chave de leitura e a guardar o segredo no cofre seguro…';
+    const apiUrl = document.getElementById('kanawaApiUrl')?.value || '';
+    const apiKey = document.getElementById('kanawaApiKey')?.value || '';
+    if (status) status.textContent = 'A validar a chave no KanawaSoft e a guardá-la no Supabase Vault…';
     try {
-      const result = await window.DPS_CLOUD_STORE.connectKanawa(purpose);
-      if (status) status.textContent = 'API ligada: ' + result.api_name + ' · Chave ' + result.api_key_prefix + '. O segredo foi guardado no Supabase Vault e não é apresentado novamente.';
-      showToast('API KanawaSoft ligada com permissão de leitura.');
+      const result = await window.DPS_CLOUD_STORE.connectKanawa(purpose, apiUrl, apiKey);
+      const keyInput = document.getElementById('kanawaApiKey');
+      if (keyInput) keyInput.value = '';
+      if (status) status.textContent = 'API validada: ' + result.api_name + ' · Chave ' + result.api_key_prefix + '. O segredo foi guardado no Vault e não fica no navegador.';
+      showToast('API KanawaSoft validada e guardada com segurança.');
     } catch (error) {
       if (status) status.textContent = 'Não foi possível ligar a API: ' + error.message;
       showToast('Ligação API não concluída: ' + error.message);
