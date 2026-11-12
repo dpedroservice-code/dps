@@ -1,0 +1,43 @@
+name: Validate D.PEDRO site and integration
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "assets/js/**"
+      - "admin.html"
+      - "login.html"
+      - "loja-virtual.html"
+      - "supabase/**"
+      - "netlify.toml"
+      - "tests/**"
+      - ".github/workflows/validate-dps.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check browser JavaScript syntax
+        run: |
+          node --check assets/js/auth.js
+          node --check assets/js/admin.js
+          node --check assets/js/cloud-store.js
+          node --check assets/js/supabase-config.js
+      - name: Run security and integration regression tests
+        run: node --test tests/dps-security.test.mjs
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Type-check Supabase Edge Functions
+        run: |
+          deno check supabase/functions/dps-store-bridge/index.ts
+          deno check supabase/functions/ks-erp-proxy/index.ts
