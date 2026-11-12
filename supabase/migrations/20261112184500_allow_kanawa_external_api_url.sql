@@ -71,3 +71,11 @@ on conflict (slug) do update set
   allowed_origins = excluded.allowed_origins,
   is_active = true,
   updated_at = now();
+
+-- Prevent duplicate orders when a browser retries after a network timeout.
+alter table public.dps_store_orders
+  add column if not exists client_ref text;
+
+create unique index if not exists dps_store_orders_company_client_ref_uq
+  on public.dps_store_orders(company_id, client_ref)
+  where client_ref is not null;
