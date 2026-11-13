@@ -25,3 +25,12 @@ test("the primary navigation does not repeat the same page destination", async (
   assert.equal(new Set(destinations).size, destinations.length,
     "each page should appear only once in the primary menu");
 });
+
+
+test("the shared navigation has responsive and keyboard-accessible styles", async () => {
+  const css = await read("../assets/css/site-shell.css");
+  assert.match(css, /@media\\(max-width:1100px\\)/);
+  assert.match(css, /site-menu\\.is-open/);
+  assert.match(css, /:focus-visible/);
+  assert.match(css, /max-height:70vh/);
+});
