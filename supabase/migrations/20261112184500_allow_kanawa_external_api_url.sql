@@ -1,5 +1,5 @@
 -- D.PEDRO e-commerce: permit only the KanawaSoft catalog endpoint and initialise the public storefront.
--- This migration is source-only until explicitly applied to the D.PEDRO Supabase project.
+-- This migration is source-only until explicitly applied to a dedicated D.PEDRO Supabase project.
 
 create or replace function public.dps_store_save_api_integration(
   p_company_id uuid,
@@ -53,6 +53,13 @@ begin
   return v_secret_id;
 end;
 $function$;
+
+-- This SECURITY DEFINER RPC is intended only for the trusted Edge Function
+-- using the service role. Never expose direct execution to browser roles.
+revoke all on function public.dps_store_save_api_integration(uuid, text, text, text, uuid, text, text, uuid)
+  from public, anon, authenticated;
+grant execute on function public.dps_store_save_api_integration(uuid, text, text, text, uuid, text, text, uuid)
+  to service_role;
 
 insert into public.dps_storefronts(company_id, slug, allowed_origins, is_active, updated_at)
 values (
