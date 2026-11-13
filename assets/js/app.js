@@ -233,18 +233,8 @@
     renderFeatured();
     renderCategories();
     filterProducts();
-    // Contadores
-    document.querySelectorAll('[data-count]').forEach(el => {
-      const target = parseInt(el.dataset.count, 10);
-      if (isNaN(target)) return;
-      let current = 0;
-      const step = Math.max(1, Math.ceil(target / 50));
-      const timer = setInterval(() => {
-        current += step;
-        if (current >= target) { current = target; clearInterval(timer); }
-        el.textContent = current;
-      }, 30);
-    });
+    const liveCount=document.getElementById('liveProductCount');
+    if(liveCount) liveCount.textContent=products.length.toLocaleString('pt-AO');
     document.getElementById('productModal')?.addEventListener('click', e => {
       if (e.target.id === 'productModal') closeProduct();
     });
