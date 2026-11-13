@@ -34,3 +34,19 @@ test("the shared navigation has responsive and keyboard-accessible styles", asyn
   assert.ok(css.includes(":focus-visible"));
   assert.ok(css.includes("max-height:70vh"));
 });
+
+
+test("a loja virtual encaminha para a secção SPA correta", async () => {
+  const page = await read("../loja-virtual.html");
+  assert.ok(page.includes("index.html#loja"), "a loja deve abrir a secção page-loja");
+  assert.ok(!page.includes("index.html#productsGrid"), "não deve usar um hash que o router não reconhece");
+});
+
+test("o catálogo público carrega mesmo quando existe cliente Supabase Auth", async () => {
+  const cloud = await read("../assets/js/cloud-store.js");
+  const init = cloud.split("document.addEventListener('DOMContentLoaded'")[1]?.split("window.DPS_CLOUD_STORE")[0];
+  assert.ok(init, "cloud-store deve inicializar no carregamento da página");
+  assert.ok(init.includes("publicProducts()"), "o catálogo público deve ser solicitado");
+  assert.ok(!/if\s*\(window\.DPAuth\?\.client\)\s*return/.test(init),
+    "a presença do SDK Auth não pode impedir a consulta pública");
+});
