@@ -5,8 +5,7 @@
 'use strict';
 
 (function () {
-  // A autenticação anterior era feita no navegador e não protegia o painel.\n  // O acesso fica bloqueado até ser ligada uma autenticação real no servidor/Cloudflare Access.\n  const ADMIN_AUTH_READY = false;
-  const STORAGE_ORDERS = 'dpedro_orders';
+  // O painel permanece bloqueado até existir autenticação validada no servidor.\n  const STORAGE_ORDERS = 'dpedro_orders';
 
   let products = [];
   let currentFilter = 'all';
@@ -25,18 +24,10 @@
 
   // ---------- LOGIN ----------
   function doLogin() {
-    const pass = document.getElementById('adminPassword')?.value;
-    if (pass === ADMIN_PASSWORD) {
-      localStorage.setItem('dpedro_admin', 'true');
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('adminPanel').style.display = 'block';
-      products = window.DPEDRO_DB.loadProducts();
-      renderAdmin();
-      showToast('✅ Login efetuado');
-    } else {
-      const e = document.getElementById('loginError');
-      if (e) e.textContent = '❌ Senha incorreta';
-    }
+    const e = document.getElementById('loginError');
+    if (e) e.textContent = 'Painel temporariamente protegido. A autenticação segura do servidor ainda está a ser configurada.';
+    const field = document.getElementById('adminPassword');
+    if (field) field.value = '';
   }
   function logout() {
     localStorage.removeItem('dpedro_admin');
