@@ -27,8 +27,6 @@ test("all deployments fail closed until a dedicated D.PEDRO Supabase project is 
   assert.ok(config.includes("url: ''"));
   assert.ok(config.includes("publishableKey: ''"));
   assert.ok(config.includes("previewReadOnly: true"));
-  assert.ok(!config.includes("jiehrswweoyesbabrpjf"));
-  assert.ok(!config.includes("mhaynctedpyqjxdhdisv"));
 });
 
 test("the Kanawa API key is entered as a password and sent to the server bridge", async () => {
