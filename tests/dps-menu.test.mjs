@@ -6,7 +6,7 @@ const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
 
 test("all menu destinations point to existing HTML pages", async () => {
   const shell = await read("../assets/js/site-shell.js");
-  const navBlock = shell.split("const navItems=[")[1]?.split("];")[0];
+  const navBlock = shell.split("const navItems=[")[1]?.split("function item(")[0];
   assert.ok(navBlock, "site-shell.js must define the primary navigation");
   const destinations = [...navBlock.matchAll(/'([^']+[.]html(?:#[^']*)?)'/g)]
     .map((match) => match[1]);
@@ -18,7 +18,7 @@ test("all menu destinations point to existing HTML pages", async () => {
 
 test("the primary navigation does not repeat the same page destination", async () => {
   const shell = await read("../assets/js/site-shell.js");
-  const navBlock = shell.split("const navItems=[")[1]?.split("];")[0];
+  const navBlock = shell.split("const navItems=[")[1]?.split("function item(")[0];
   assert.ok(navBlock, "site-shell.js must define the primary navigation");
   const destinations = [...navBlock.matchAll(/'([^']+[.]html(?:#[^']*)?)'/g)]
     .map((match) => match[1]);
