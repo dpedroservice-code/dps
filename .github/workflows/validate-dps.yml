@@ -32,7 +32,9 @@ jobs:
           node --check assets/js/auth.js
           node --check assets/js/admin.js
           node --check assets/js/cloud-store.js
-          node --check assets/js/supabase-config.js\n          node --check assets/js/site-shell.js\n          node --check assets/js/nav-responsive.js
+          node --check assets/js/supabase-config.js
+          node --check assets/js/site-shell.js
+          node --check assets/js/nav-responsive.js
       - name: Run security and integration regression tests
         run: node --test tests/*.test.mjs
       - name: Set up Deno
