@@ -105,7 +105,13 @@
 <div id="page-loja" class="page">
     <section class="container" style="padding-top:2rem;">
         <h2 class="section-title"><i class="fas fa-shopping-bag"></i> Loja Online</h2>
-        <p class="section-subtitle">Consulte as categorias e confirme preço, stock, garantia e entrega antes de encomendar.</p>
+        <p class="section-subtitle">Encontre equipamentos, consumíveis e soluções para casa, escritório e empresas. A listagem apresenta apenas artigos efectivamente disponibilizados no catálogo; os dados comerciais são confirmados antes da encomenda.</p>
+        <div class="card-grid" style="margin:1.2rem 0 1.5rem;">
+            <div class="info-card"><h3><i class="fas fa-video"></i> Segurança e controlo</h3><p>Câmaras CCTV, gravadores, armazenamento, alarmes e controlo de acesso. A escolha depende do espaço, cobertura e condições de instalação.</p></div>
+            <div class="info-card"><h3><i class="fas fa-laptop"></i> Informática e conectividade</h3><p>Computadores, impressoras, periféricos, routers, switches, cabos e acessórios para redes.</p></div>
+            <div class="info-card"><h3><i class="fas fa-solar-panel"></i> Energia e material eléctrico</h3><p>Componentes solares, baterias, inversores, iluminação, cabos e protecções eléctricas, conforme especificação.</p></div>
+            <div class="info-card"><h3><i class="fas fa-store"></i> Escritório e comércio</h3><p>Papelaria, consumíveis, acessórios para PDV, materiais gráficos, fotografia, vídeo e outras categorias do catálogo.</p></div>
+        </div>
         <div class="categories-grid" id="categoriesGrid"></div>
         <div class="filters">
             <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Pesquisar produtos..." oninput="filterProducts()"></div>
@@ -118,6 +124,16 @@
             <button class="btn-ofertas" onclick="toggleOfertas()" id="btnOfertas">🔥 Ofertas</button>
         </div>
         <div class="products-grid" id="productsGrid"></div>
+        <section class="info-card" style="margin-top:2rem;">
+            <h3><i class="fas fa-clipboard-check"></i> Antes de confirmar a compra</h3>
+            <div class="card-grid">
+                <div><strong>1. Escolha o artigo</strong><p>Use a pesquisa e as categorias para localizar o produto pretendido.</p></div>
+                <div><strong>2. Confirme os detalhes</strong><p>Verifique modelo, marca, características, quantidade e compatibilidade.</p></div>
+                <div><strong>3. Confirme as condições</strong><p>A equipa valida preço final, stock, garantia aplicável, forma de pagamento e prazo de entrega.</p></div>
+                <div><strong>4. Envie o pedido</strong><p>Adicione ao carrinho e finalize por WhatsApp ou e-mail para receber confirmação.</p></div>
+            </div>
+            <p class="note-panel" style="margin-bottom:0;">A inclusão no carrinho ou o envio de uma mensagem não representa confirmação automática de stock nem reserva do artigo. Não efectue pagamentos antes de receber a confirmação do pedido e das condições comerciais.</p>
+        </section>
     </section>
 </div>
 
