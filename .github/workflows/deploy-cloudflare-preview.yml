@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Validate local website links and admin security
+        run: python3 scripts/check_site.py
       - name: Deploy preview Worker
         uses: cloudflare/wrangler-action@v3
         with:
