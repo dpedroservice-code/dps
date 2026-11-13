@@ -5,7 +5,7 @@
 'use strict';
 
 (function () {
-  const ADMIN_PASSWORD = 'dpedro2026';
+  // O painel permanece bloqueado até existir autenticação validada no servidor.
   const STORAGE_ORDERS = 'dpedro_orders';
 
   let products = [];
@@ -25,18 +25,10 @@
 
   // ---------- LOGIN ----------
   function doLogin() {
-    const pass = document.getElementById('adminPassword')?.value;
-    if (pass === ADMIN_PASSWORD) {
-      localStorage.setItem('dpedro_admin', 'true');
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('adminPanel').style.display = 'block';
-      products = window.DPEDRO_DB.loadProducts();
-      renderAdmin();
-      showToast('✅ Login efetuado');
-    } else {
-      const e = document.getElementById('loginError');
-      if (e) e.textContent = '❌ Senha incorreta';
-    }
+    const e = document.getElementById('loginError');
+    if (e) e.textContent = 'Painel temporariamente protegido. A autenticação segura do servidor ainda está a ser configurada.';
+    const field = document.getElementById('adminPassword');
+    if (field) field.value = '';
   }
   function logout() {
     localStorage.removeItem('dpedro_admin');
@@ -361,7 +353,7 @@
   // ---------- INIT ----------
   document.addEventListener('DOMContentLoaded', () => {
     products = window.DPEDRO_DB.loadProducts();
-    if (localStorage.getItem('dpedro_admin') === 'true') {
+    if (false) {
       const ls = document.getElementById('loginScreen');
       const ap = document.getElementById('adminPanel');
       if (ls) ls.style.display = 'none';
