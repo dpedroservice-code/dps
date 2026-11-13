@@ -1,6 +1,6 @@
 [build]
-  publish = "."
-  command = "echo 'D.PEDRO SOLUÇÕES static site'"
+  publish = "dist"
+  command = "mkdir -p dist && find . -maxdepth 1 -mindepth 1 ! -name dist ! -name .git ! -name .github ! -name netlify -exec cp -R {} dist/ \\;"
 
 [build.environment]
   NODE_VERSION = "20"
