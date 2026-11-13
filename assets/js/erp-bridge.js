@@ -1,118 +1,75 @@
-/* =========================================================
-   D.PEDRO SOLUÇÕES — ERP BRIDGE (API + Webhooks + Plugins)
-   Liga o e-commerce ao KanawaSoft ERP
-   ========================================================= */
+/* D.PEDRO SOLUÇÕES — integração ERP server-side.
+ * Nenhuma chave privada fica no browser. Sem configuração/endpoint real, a operação falha.
+ */
 'use strict';
 
 (function () {
-  const ERP_CONFIG = {
-    baseURL: localStorage.getItem('erp_base_url') || 'https://api.kanawasoft.ao/v1',
-    apiKey: localStorage.getItem('erp_api_key') || '',
-    storeId: localStorage.getItem('erp_store_id') || 'DPEDRO-LDA-001',
-    autoSync: localStorage.getItem('erp_auto_sync') !== 'false',
-    webhooks: {
-      onProductPublish: '/webhooks/product/published',
-      onOrderCreate:    '/webhooks/order/created',
-      onOrderPaid:      '/webhooks/order/paid',
-      onStockChange:    '/webhooks/stock/changed'
-    }
-  };
-
   const PLUGINS = [
-    { id:'woocommerce', name:'WooCommerce',    icon:'fa-wordpress',  connected:false },
-    { id:'shopify',     name:'Shopify',        icon:'fa-shopify',    connected:false },
-    { id:'kanawa',      name:'KanawaSoft ERP', icon:'fa-desktop',    connected:false },
-    { id:'saft',        name:'SAFT-AO (AGT)',  icon:'fa-file-invoice',connected:false },
-    { id:'stripe',      name:'Stripe',         icon:'fa-credit-card',connected:false },
-    { id:'multicaixa',  name:'Multicaixa',     icon:'fa-money-bill', connected:false },
-    { id:'whatsapp',    name:'WhatsApp Cloud', icon:'fa-whatsapp',   connected:false },
-    { id:'google-sheets',name:'Google Sheets', icon:'fa-table',      connected:false }
+    { id:'woocommerce', name:'WooCommerce', icon:'fa-wordpress' },
+    { id:'shopify', name:'Shopify', icon:'fa-shopify' },
+    { id:'kanawa', name:'KanawaSoft ERP', icon:'fa-desktop' },
+    { id:'saft', name:'SAFT-AO (AGT)', icon:'fa-file-invoice' },
+    { id:'stripe', name:'Stripe', icon:'fa-credit-card' },
+    { id:'multicaixa', name:'Multicaixa', icon:'fa-money-bill' },
+    { id:'whatsapp', name:'WhatsApp Cloud', icon:'fa-whatsapp' },
+    { id:'google-sheets', name:'Google Sheets', icon:'fa-table' }
   ];
 
   function loadPlugins() {
-    try {
-      const saved = JSON.parse(localStorage.getItem('erp_plugins') || '[]');
-      return PLUGINS.map(p => ({ ...p, connected: saved.includes(p.id) }));
-    } catch (e) { return PLUGINS; }
-  }
-  function savePlugins(list) {
-    localStorage.setItem('erp_plugins', JSON.stringify(list.filter(p => p.connected).map(p => p.id)));
-  }
-  function togglePlugin(id) {
-    const list = loadPlugins();
-    const p = list.find(x => x.id === id);
-    if (p) p.connected = !p.connected;
-    savePlugins(list);
-    return list;
+    return PLUGINS.map(plugin => ({ ...plugin, connected: false, status: 'Não configurado' }));
   }
 
-  function buildHeaders() {
-    return {
-      'Content-Type': 'application/json',
-      'X-Store-Id': ERP_CONFIG.storeId,
-      'X-Api-Key': ERP_CONFIG.apiKey,
-      'X-Client': 'D.PEDRO-ECOMMERCE'
-    };
+  function togglePlugin() {
+    return loadPlugins();
   }
 
-  async function apiCall(endpoint, method = 'GET', body = null) {
-    const url = ERP_CONFIG.baseURL + endpoint;
-    const opts = { method, headers: buildHeaders() };
-    if (body) opts.body = JSON.stringify(body);
-
-    // Simulação offline (não há servidor real)
-    if (!ERP_CONFIG.apiKey) {
-      return {
-        ok: true,
-        simulated: true,
-        endpoint,
-        method,
-        body,
-        timestamp: new Date().toISOString()
-      };
+  async function apiCall(event, payload) {
+    if (!window.DPAuth?.client) {
+      return { ok: false, error: 'Autenticação Supabase indisponível.' };
     }
-
     try {
-      const res = await fetch(url, opts);
-      return await res.json();
-    } catch (e) {
-      return { ok: false, error: e.message, endpoint };
+      const membership = await window.DPAuth.getActiveMembership();
+      if (!membership) return { ok: false, error: 'Não existe uma associação ativa a uma empresa.' };
+      const { data, error } = await window.DPAuth.client.functions.invoke('ks-erp-proxy', {
+        body: { company_id: membership.company_id, event, payload }
+      });
+      if (error) return { ok: false, error: error.message || 'Falha ao chamar a função ERP.' };
+      if (!data?.ok) return { ok: false, error: data?.error || 'A integração ERP não confirmou a operação.', details: data };
+      logEvent(event, { company_id: membership.company_id, ok: true, upstream_status: data.upstream_status });
+      return data;
+    } catch (error) {
+      return { ok: false, error: error?.message || 'Erro inesperado na integração ERP.' };
     }
   }
 
-  // ================= Webhooks =================
   async function webhookProductPublish(product) {
-    return apiCall(ERP_CONFIG.webhooks.onProductPublish, 'POST', {
-      id: product.id,
-      name: product.name,
-      price: product.promo || product.price,
-      stock: product.stock,
-      category: product.category,
-      status: product.status
-    });
-  }
-  async function webhookOrderCreate(order) {
-    return apiCall(ERP_CONFIG.webhooks.onOrderCreate, 'POST', order);
-  }
-  async function webhookOrderPaid(order) {
-    return apiCall(ERP_CONFIG.webhooks.onOrderPaid, 'POST', order);
-  }
-  async function webhookStockChange(product) {
-    return apiCall(ERP_CONFIG.webhooks.onStockChange, 'POST', {
-      id: product.id, stock: product.stock
+    return apiCall('product.published', {
+      id: product.id, name: product.name, price: product.promo || product.price,
+      stock: product.stock, category: product.category, status: product.status
     });
   }
 
-  // ================= Sincronização =================
+  async function webhookOrderCreate(order) {
+    return apiCall('order.created', order);
+  }
+
+  async function webhookOrderPaid(order) {
+    return apiCall('order.paid', order);
+  }
+
+  async function webhookStockChange(product) {
+    return apiCall('stock.changed', { id: product.id, stock: product.stock });
+  }
+
   async function syncProducts() {
-    const products = window.DPEDRO_DB.loadProducts();
-    const published = products.filter(p => p.status === 'publicado');
+    const products = window.DPEDRO_DB?.loadProducts?.() || [];
+    const published = products.filter(product => product.status === 'publicado');
     const results = [];
-    for (const p of published) {
-      results.push(await webhookProductPublish(p));
-    }
-    logEvent('sync_products', { total: published.length });
-    return { ok: true, total: published.length, results };
+    for (const product of published) results.push(await webhookProductPublish(product));
+    const succeeded = results.filter(result => result?.ok === true).length;
+    const failed = results.length - succeeded;
+    logEvent('sync_products', { total: published.length, succeeded, failed });
+    return { ok: failed === 0, total: published.length, succeeded, failed, results };
   }
 
   function logEvent(type, data) {
@@ -120,31 +77,28 @@
       const logs = JSON.parse(localStorage.getItem('erp_logs') || '[]');
       logs.push({ type, data, date: new Date().toISOString() });
       localStorage.setItem('erp_logs', JSON.stringify(logs.slice(-200)));
-    } catch (e) {}
+    } catch (_) {}
   }
-  function loadLogs() {
-    try { return JSON.parse(localStorage.getItem('erp_logs') || '[]'); } catch (e) { return []; }
-  }
-  function clearLogs() { localStorage.removeItem('erp_logs'); }
 
-  // ================= Config =================
-  function saveConfig(cfg) {
-    Object.keys(cfg).forEach(k => {
-      localStorage.setItem('erp_' + k, cfg[k]);
-      ERP_CONFIG[k] = cfg[k];
-    });
+  function loadLogs() {
+    try { return JSON.parse(localStorage.getItem('erp_logs') || '[]'); } catch (_) { return []; }
   }
-  function getConfig() { return { ...ERP_CONFIG }; }
+
+  function clearLogs() {
+    localStorage.removeItem('erp_logs');
+  }
+
+  function getConfig() {
+    return { serverManaged: true, configuredInBrowser: false };
+  }
+
+  function saveConfig() {
+    throw new Error('As credenciais ERP são configuradas apenas nos segredos server-side do Supabase.');
+  }
 
   window.ERP_BRIDGE = {
-    getConfig, saveConfig,
-    loadPlugins, togglePlugin,
-    apiCall,
-    webhookProductPublish,
-    webhookOrderCreate,
-    webhookOrderPaid,
-    webhookStockChange,
-    syncProducts,
-    loadLogs, clearLogs
+    getConfig, saveConfig, loadPlugins, togglePlugin, apiCall,
+    webhookProductPublish, webhookOrderCreate, webhookOrderPaid,
+    webhookStockChange, syncProducts, loadLogs, clearLogs
   };
 })();

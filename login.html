@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Entrar — D.PEDRO SOLUÇÕES</title>
+<link rel="icon" href="assets/1.png"><link rel="stylesheet" href="assets/css/style.css">
+<style>
+.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:24px;background:var(--bg,#f4f7fb)}
+.auth-card{width:min(100%,460px);background:var(--card,#fff);padding:34px;border-radius:20px;box-shadow:0 18px 55px #10233b18}
+.auth-card h1{margin:8px 0}.auth-card p{color:var(--text-muted,#64748b);line-height:1.55}
+.auth-card label{display:block;font-weight:600;margin:16px 0 7px}
+.auth-card input{width:100%;padding:14px;border:1px solid var(--border,#dbe2ea);border-radius:10px;background:var(--bg,#fff);color:var(--text,#172033);font:inherit}
+.auth-card button{width:100%;padding:14px;margin-top:16px;border:0;border-radius:10px;background:var(--primary,#1769aa);color:white;font-weight:700;cursor:pointer}
+.auth-links{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px}
+.auth-links a{color:var(--primary,#1769aa)}.notice{margin-top:14px;font-size:.92rem}.error{color:#b42318}.success{color:#067647}
+[hidden]{display:none!important}.brand{font-weight:800;color:var(--primary,#1769aa);letter-spacing:.03em}
+</style></head>
+<body><main class="auth-wrap"><section class="auth-card">
+<div class="brand">D.PEDRO SOLUÇÕES</div><h1>Entrar na sua conta</h1>
+<p>Acesso administrativo exclusivo de <strong>dpedroservice@gmail.com</strong>. Enviaremos um código temporário de seis dígitos para confirmar a identidade.</p>
+<form id="sendForm"><label for="email">E-mail</label><input id="email" type="email" autocomplete="email" required placeholder="nome@exemplo.com"><button id="sendBtn">Enviar código de acesso</button></form>
+<form id="verifyForm" hidden><label for="otp">Código de seis dígitos</label><input id="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required placeholder="000000"><button id="verifyBtn">Confirmar e entrar</button></form>
+<div id="notice" class="notice" role="status" aria-live="polite"></div>
+<div class="auth-links"><a href="forgot-password.html">Esqueci a palavra-passe</a><a href="index.html">Voltar ao site</a></div>
+</section></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script><script src="assets/js/supabase-config.js"></script><script src="assets/js/auth.js"></script>
+<script>
+const $=id=>document.getElementById(id), params=new URLSearchParams(location.search);
+const next=params.get('next')==='admin.html'?'admin.html':'index.html';
+function note(msg,type=''){ $('notice').textContent=msg;$('notice').className='notice '+type; }
+$('sendForm').addEventListener('submit',async e=>{e.preventDefault();$('sendBtn').disabled=true;note('A enviar código…');try{await DPAuth.sendLoginCode($('email').value);$('sendForm').hidden=true;$('verifyForm').hidden=false;$('otp').focus();note('Código enviado. Verifique também a pasta de spam.','success');}catch(err){note(err.message,'error');}finally{$('sendBtn').disabled=false;}});
+$('verifyForm').addEventListener('submit',async e=>{e.preventDefault();$('verifyBtn').disabled=true;note('A validar código…');try{await DPAuth.verifyLoginCode($('email').value,$('otp').value);location.replace(next);}catch(err){note(err.message,'error');}finally{$('verifyBtn').disabled=false;}});
+</script></body></html>

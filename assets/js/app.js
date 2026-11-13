@@ -1,5 +1,5 @@
 /* =========================================================
-   D.PEDRO SOLUÇÕES — SPA + LOJA (100 PRODUTOS)
+   D.PEDRO SOLUÇÕES — NAVEGAÇÃO E LOJA
    ========================================================= */
 'use strict';
 
@@ -12,6 +12,16 @@
 
   function escapeHtml(s) {
     const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML;
+  }
+  function safeImageUrl(value) {
+    const src = String(value || '').trim();
+    if (src.startsWith('https://') || src.startsWith('http://') || src.startsWith('/') || src.startsWith('./') || src.startsWith('../') || src.startsWith('assets/')) return src;
+    return 'assets/1.png';
+  }
+  function addToCart(productId, qty) {
+    const product = products.find(p => String(p.id) === String(productId));
+    if (!product || Number(product.stock) <= 0) { alert('Produto indisponível ou sem stock.'); return; }
+    if (window.DPEDRO_CART?.add) window.DPEDRO_CART.add(product, qty);
   }
 
   // ============ NAVEGAÇÃO SPA ============
@@ -32,7 +42,7 @@
     const grid = document.getElementById('featuredProducts');
     if (!grid) return;
     const featured = products.filter(p => p.status === 'publicado' && p.promo && p.promo < p.price).slice(0, 8);
-    grid.innerHTML = featured.map(productCardHTML).join('');
+    grid.innerHTML = featured.length ? featured.map(productCardHTML).join('') : '<p class="section-subtitle">Ainda não há produtos em destaque com preço e disponibilidade confirmados. Contacte-nos para consultar opções.</p>';
   }
 
   // ============ CATEGORIAS ============
@@ -68,14 +78,14 @@
     const catName = window.DPEDRO_DB.categories.find(c => c.id === p.category)?.name || p.category;
     return `
       <div class="product-card">
-        <div class="product-image" onclick="openDetail(${p.id})">
-          <img src="${p.image}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.src='assets/1.png'">
+        <div class="product-image" onclick="openDetail('${escapeHtml(p.id)}')">
+          <img src="${escapeHtml(safeImageUrl(p.image))}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.src='assets/1.png'">
           ${hasPromo ? '<span class="product-badge promo">PROMO</span>' : ''}
           ${!inStock ? '<span class="product-badge out">ESGOTADO</span>' : ''}
         </div>
         <div class="product-info">
           <div class="product-cat">${catName}</div>
-          <h3 class="product-name" onclick="openDetail(${p.id})">${escapeHtml(p.name)}</h3>
+          <h3 class="product-name" onclick="openDetail('${escapeHtml(p.id)}')">${escapeHtml(p.name)}</h3>
           <p class="product-specs">${escapeHtml(p.specs || '')}</p>
           <div class="product-price">
             <span class="current">${window.DPEDRO_DB.fmtKz(price)}</span>
@@ -86,10 +96,10 @@
             ${inStock ? `Stock: ${p.stock}` : 'Esgotado'}
           </div>
           <div class="product-actions">
-            <button class="btn-add-cart" onclick="addToCart(${p.id},1)" ${!inStock ? 'disabled' : ''}>
+            <button class="btn-add-cart" onclick="addToCart('${escapeHtml(p.id)}',1)" ${!inStock ? 'disabled' : ''}>
               <i class="fas fa-cart-plus"></i> Adicionar
             </button>
-            <button class="btn-view" onclick="openDetail(${p.id})">
+            <button class="btn-view" onclick="openDetail('${escapeHtml(p.id)}')">
               <i class="fas fa-eye"></i>
             </button>
           </div>
@@ -106,7 +116,7 @@
     let filtered = products.filter(p => {
       const isPublished = p.status === 'publicado';
       const matchCat = currentCategory === 'all' || p.category === currentCategory;
-      const matchSearch = p.name.toLowerCase().includes(search) || (p.specs || '').toLowerCase().includes(search);
+      const matchSearch = String(p.name || '').toLowerCase().includes(search) || (p.specs || '').toLowerCase().includes(search);
       const matchOffer = !showOnlyOffers || (p.promo && p.promo < p.price);
       return isPublished && matchCat && matchSearch && matchOffer;
     });
@@ -114,7 +124,7 @@
     if (sort === 'price-desc') filtered.sort((a, b) => (b.promo || b.price) - (a.promo || a.price));
     if (sort === 'name')       filtered.sort((a, b) => a.name.localeCompare(b.name));
     if (!filtered.length) {
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted);"><i class="fas fa-search" style="font-size:3rem;margin-bottom:1rem;display:block;"></i>Nenhum produto encontrado.</div>';
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted);"><i class="fas fa-box-open" style="font-size:3rem;margin-bottom:1rem;display:block;"></i><strong>Catálogo em atualização.</strong><p>Não há produtos publicados com preço e stock confirmados neste momento.</p><a class="btn btn-primary" href="contactos.html">Consultar disponibilidade</a></div>';
       return;
     }
     grid.innerHTML = filtered.map(productCardHTML).join('');
@@ -122,7 +132,7 @@
 
   // ============ DETALHE ============
   function openDetail(id) {
-    const p = products.find(x => x.id === id);
+    const p = products.find(x => String(x.id) === String(id));
     if (!p) return;
     currentDetailProduct = p;
     currentQty = 1;
@@ -184,13 +194,29 @@
     addToCart(currentDetailProduct.id, currentQty);
     closeProduct();
   }
-  function buyDetailNow() {
+  async function buyDetailNow() {
     if (!currentDetailProduct) return;
     const p = currentDetailProduct;
+    const popup = window.open('about:blank', '_blank');
     const price = p.promo || p.price;
-    const msg = `*PEDIDO - D.PEDRO*\n\n*Produto:* ${p.name}\n*Qtd:* ${currentQty}\n*Preço:* ${window.DPEDRO_DB.fmtKz(price)}\n*Total:* ${window.DPEDRO_DB.fmtKz(price * currentQty)}\n\nAguardo confirmação.`;
-    if (typeof gtag === 'function') gtag('event', 'purchase', { value: price * currentQty, currency: 'AOA' });
-    window.open(`https://wa.me/244946299834?text=${encodeURIComponent(msg)}`, '_blank');
+    let orderNumber = '';
+    try {
+      const order = await window.DPS_CLOUD_STORE?.createOrder('WhatsApp', [{ id: p.id, qty: currentQty }]);
+      orderNumber = order?.order_number || '';
+    } catch (error) {
+      if (error.status && error.status >= 400 && error.status < 500) {
+        if (popup) popup.close();
+        alert(error.message);
+        return;
+      }
+      window.DPS_CLOUD_STORE?.queueOrder('WhatsApp', [{ id: p.id, qty: currentQty }]);
+    }
+    const total = price * currentQty;
+    const reference = orderNumber ? '*Referência:* ' + orderNumber : '*Referência:* sincronização pendente';
+    const msg = '*PEDIDO - D.PEDRO*\\n' + reference + '\\n\\n*Produto:* ' + p.name + '\\n*Qtd:* ' + currentQty + '\\n*Preço apresentado:* ' + window.DPEDRO_DB.fmtKz(price) + '\\n*Total apresentado:* ' + window.DPEDRO_DB.fmtKz(total) + '\\n\\nAguardo confirmação de disponibilidade e pagamento.';
+    if (typeof gtag === 'function') gtag('event', 'purchase', { value: total, currency: 'AOA' });
+    const url = 'https://wa.me/244946299834?text=' + encodeURIComponent(msg);
+    if (popup && !popup.closed) popup.location.href = url; else window.location.href = url;
   }
   function closeProduct() {
     document.getElementById('productModal').classList.remove('active');
@@ -200,6 +226,7 @@
   // ============ INIT ============
   document.addEventListener('DOMContentLoaded', () => {
     products = window.DPEDRO_DB.loadProducts();
+    window.addEventListener('dpedro:products-updated', event => { products = Array.isArray(event.detail) ? event.detail : window.DPEDRO_DB.loadProducts(); renderFeatured(); renderCategories(); filterProducts(); });
     if (localStorage.getItem('dpedro_theme') === 'dark') document.body.classList.add('dark');
     renderFeatured();
     renderCategories();
@@ -239,5 +266,6 @@
   window.changeDetailQty = changeDetailQty;
   window.addDetailToCart = addDetailToCart;
   window.buyDetailNow = buyDetailNow;
+  window.addToCart = addToCart;
   window.toggleTheme = toggleTheme;
 })();

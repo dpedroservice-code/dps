@@ -1,19 +1,7 @@
-<main class="container">
-    <div class="page-hero">
-        <div class="page-hero-content">
-            <div class="breadcrumb"><a href="index.html">Início</a><span>/</span><a href="empresa.html">Empresa</a><span>/</span>Indique e ganhe</div>
-            <div class="badge"><i class="fas fa-gift"></i> Programa de referência</div>
-            <h1>Indique e Ganhe</h1>
-            <p>Recomende a D.PEDRO SOLUÇÕES e receba recompensas exclusivas.</p>
-        </div>
-    </div>
-    <div class="card-grid">
-        <div class="info-card"><div class="info-card-icon"><i class="fas fa-1"></i></div><h3>1. Indique</h3><p>Recomende um amigo, familiar ou empresa à D.PEDRO SOLUÇÕES.</p></div>
-        <div class="info-card"><div class="info-card-icon"><i class="fas fa-2"></i></div><h3>2. Contactamos</h3><p>A nossa equipa entra em contacto e apresenta as soluções adequadas.</p></div>
-        <div class="info-card"><div class="info-card-icon"><i class="fas fa-3"></i></div><h3>3. Ganhe</h3><p>Após o fecho do negócio, recebe uma recompensa em dinheiro ou serviço.</p></div>
-    </div>
-    <div class="cta-block">
-        <div><h3>Quer indicar alguém agora?</h3><p>Envie-nos o contacto através do WhatsApp.</p></div>
-        <a href="https://wa.me/244946299834?text=Quero%20indicar%20alguém" class="btn-primary" target="_blank"><i class="fab fa-whatsapp"></i> Indicar agora</a>
-    </div>
-</main>
+<!doctype html>
+<html lang="pt-AO"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#1e3a8a"><meta name="description" content="Envie uma referência comercial para a D.PEDRO SOLUÇÕES."><title>Indique e ganhe | D.PEDRO SOLUÇÕES</title><link rel="icon" href="assets/1.png"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="assets/css/style.css"><link rel="stylesheet" href="assets/css/site-shell.css"><script defer src="assets/js/site-shell.js"></script></head><body><header data-site-header></header><main class="container" style="padding-top:1rem;padding-bottom:2rem">
+<nav class="breadcrumb"><a href="index.html">Início</a> / <a href="empresa.html">Empresa</a> / Indique e ganhe</nav><section class="page-hero"><div class="page-hero-content"><span class="badge">Referências</span><h1>Indique um contacto</h1><p>Ajude alguém a encontrar uma solução de tecnologia, segurança ou energia. A referência não implica comissão ou recompensa automática.</p></div></section>
+<div class="card-grid"><article class="info-card"><h3>1. Partilhe a necessidade</h3><p>Explique que produto ou serviço a pessoa procura.</p></article><article class="info-card"><h3>2. Peça autorização</h3><p>Confirme que a pessoa aceita ser contactada antes de partilhar os seus dados.</p></article><article class="info-card"><h3>3. Envie a referência</h3><p>A equipa avalia o pedido e informa se pode prestar o serviço.</p></article></div>
+<div class="note-panel">Não recolha nem envie dados pessoais de terceiros sem consentimento. Qualquer eventual benefício de referência só existe se for previamente confirmado por escrito pela D.PEDRO SOLUÇÕES.</div>
+<form id="referral-form" class="info-card" style="max-width:720px"><label for="ref-name">Seu nome</label><input id="ref-name" name="referrer" required><label for="ref-phone">Seu telefone</label><input id="ref-phone" name="phone" required><label for="ref-person">Nome da pessoa/empresa indicada</label><input id="ref-person" name="person" required><label for="ref-consent"><input id="ref-consent" type="checkbox" required> Confirmo que tenho autorização para partilhar este contacto.</label><label for="ref-detail">Necessidade (sem dados sensíveis)</label><textarea id="ref-detail" name="detail" rows="3"></textarea><button class="btn btn-success" type="submit">Preparar referência no WhatsApp</button><p id="ref-status" role="status">A mensagem será aberta para revisão e envio manual.</p></form>
+<script>document.getElementById('referral-form').addEventListener('submit',function(e){e.preventDefault();if(!this.reportValidity())return;const d=new FormData(this);const msg=['REFERÊNCIA COMERCIAL','Indicado por: '+d.get('referrer'),'Telefone: '+d.get('phone'),'Contacto indicado: '+d.get('person'),'Necessidade: '+(d.get('detail')||'A confirmar'),'Consentimento para partilha: confirmado pelo remetente'].join('\n');window.open('https://wa.me/244946299834?text='+encodeURIComponent(msg),'_blank','noopener');document.getElementById('ref-status').textContent='Mensagem preparada. Reveja e envie no WhatsApp.';});</script></main><footer data-site-footer></footer><a href="https://wa.me/244946299834" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar pelo WhatsApp"><i class="fab fa-whatsapp"></i></a></body></html>
