@@ -5,7 +5,8 @@
 'use strict';
 
 (function () {
-  // O painel permanece bloqueado até existir autenticação validada no servidor.\n  const STORAGE_ORDERS = 'dpedro_orders';
+  // O painel permanece bloqueado até existir autenticação validada no servidor.
+  const STORAGE_ORDERS = 'dpedro_orders';
 
   let products = [];
   let currentFilter = 'all';
