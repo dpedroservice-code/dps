@@ -2,7 +2,7 @@
 // Configure KANAWA_ECOMMERCE_API_KEY in Netlify environment variables.
 export default async (request) => {
   if (request.method !== 'GET') return new Response(JSON.stringify({error:'Método não permitido.'}), {status:405,headers:{'Content-Type':'application/json','Allow':'GET'}});
-  const key = process.env.KANAWA_ECOMMERCE_API_KEY;
+  const key = Netlify.env.get('KANAWA_ECOMMERCE_API_KEY');
   if (!key) return new Response(JSON.stringify({error:'Integração ainda não configurada: falta a chave API no ambiente seguro do site.'}), {status:503,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}});
   try {
     const upstream = await fetch('https://mhaynctedpyqjxdhdisv.supabase.co/functions/v1/ecommerce-gateway?action=catalog', {
