@@ -1,0 +1,20 @@
+name: Deploy D.PEDRO preview to Cloudflare Workers
+on:
+  push:
+    branches:
+      - feat/cloudflare-dpedro-site-refresh
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Deploy preview Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --name dpedro-solucoes-preview
