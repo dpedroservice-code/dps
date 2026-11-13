@@ -5,7 +5,7 @@
 'use strict';
 
 (function () {
-  const ADMIN_PASSWORD = 'dpedro2026';
+  // A autenticação anterior era feita no navegador e não protegia o painel.\n  // O acesso fica bloqueado até ser ligada uma autenticação real no servidor/Cloudflare Access.\n  const ADMIN_AUTH_READY = false;
   const STORAGE_ORDERS = 'dpedro_orders';
 
   let products = [];
@@ -361,7 +361,7 @@
   // ---------- INIT ----------
   document.addEventListener('DOMContentLoaded', () => {
     products = window.DPEDRO_DB.loadProducts();
-    if (localStorage.getItem('dpedro_admin') === 'true') {
+    if (false) {
       const ls = document.getElementById('loginScreen');
       const ap = document.getElementById('adminPanel');
       if (ls) ls.style.display = 'none';
