@@ -11,7 +11,9 @@
 .site-menu a,.site-menu summary{display:block;padding:.55rem .72rem;border-radius:2rem;color:#1e293b;text-decoration:none;font-size:.87rem;font-weight:650;cursor:pointer;white-space:nowrap}
 .site-menu a:hover,.site-menu summary:hover,.site-menu a[aria-current=page]{background:#eff6ff;color:#1d4ed8}
 .site-menu details{position:relative}
-.site-menu details[open] summary{background:#eff6ff;color:#1d4ed8}\n.site-menu a:focus-visible,.site-menu summary:focus-visible,.site-nav-toggle:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}\n.site-nav-toggle{cursor:pointer;flex:0 0 44px}
+.site-menu details[open] summary{background:#eff6ff;color:#1d4ed8}
+.site-menu a:focus-visible,.site-menu summary:focus-visible,.site-nav-toggle:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+.site-nav-toggle{cursor:pointer;flex:0 0 44px}
 .site-menu details .site-submenu{position:absolute;top:100%;left:0;min-width:220px;max-width:min(320px,90vw);max-height:70vh;overflow:auto;background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:.5rem;box-shadow:0 16px 35px rgba(15,23,42,.15);display:grid;gap:.15rem;z-index:1200}
 .site-footer{margin-top:3rem;background:#0f172a;color:#e2e8f0;padding:2rem 5% 1rem}
 .site-footer-grid{max-width:1180px;margin:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1.5rem}
