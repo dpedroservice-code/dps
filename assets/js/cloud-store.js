@@ -195,7 +195,8 @@
   }
   window.addEventListener('online', () => retryPendingOrders().catch(() => {}));
   document.addEventListener('DOMContentLoaded', () => {
-    if (window.DPAuth?.client) return;
+    // O catálogo público não depende de sessão administrativa. Carregá-lo
+    // mesmo quando o SDK Auth está presente evita a loja vazia para visitantes.
     publicProducts().catch(error => {
       console.warn('[DPS Store] Catálogo online indisponível:', error.message);
       window.dispatchEvent(new CustomEvent('dpedro:products-updated', { detail: [] }));
