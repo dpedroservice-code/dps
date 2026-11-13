@@ -29,8 +29,8 @@ test("the primary navigation does not repeat the same page destination", async (
 
 test("the shared navigation has responsive and keyboard-accessible styles", async () => {
   const css = await read("../assets/css/site-shell.css");
-  assert.match(css, /@media\\(max-width:1100px\\)/);
-  assert.match(css, /site-menu\\.is-open/);
-  assert.match(css, /:focus-visible/);
-  assert.match(css, /max-height:70vh/);
+  assert.ok(css.includes("@media(max-width:1100px)"));
+  assert.ok(css.includes(".site-menu.is-open"));
+  assert.ok(css.includes(":focus-visible"));
+  assert.ok(css.includes("max-height:70vh"));
 });
