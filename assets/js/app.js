@@ -198,8 +198,8 @@
   }
 
   // ============ INIT ============
-  document.addEventListener('DOMContentLoaded', () => {
-    products = window.DPEDRO_DB.loadProducts();
+  document.addEventListener('DOMContentLoaded', async () => {
+    try { products = await window.DPEDRO_DB.loadProducts(); } catch (error) { products = []; const grid = document.getElementById('productsGrid'); if (grid) grid.innerHTML = '<div class="catalog-status"><h3>Catálogo temporariamente indisponível</h3><p>' + escapeHtml(error.message) + '</p><button class="btn btn-primary" onclick="location.reload()">Tentar novamente</button></div>'; }
     if (localStorage.getItem('dpedro_theme') === 'dark') document.body.classList.add('dark');
     renderFeatured();
     renderCategories();
