@@ -8,7 +8,7 @@ const navItems=[
  ['Soluções','solucoes.html','shield',[['Câmaras CFTV','cctv.html'],['Alarmes','alarmes.html'],['Controlo de acesso','controlo-acesso.html'],['Energia solar','energia-solar.html'],['Cerca elétrica','cerca-eletrica.html'],['Gravadores','gravadores.html'],['Hardware e redes','hardware-redes.html']]],
  ['Produtos','produtos.html','box',[['Catálogo geral','catalogo.html'],['Loja virtual','loja-virtual.html'],['Aplicativos','aplicativos.html'],['Manuais','manuais.html'],['Templates','templates.html'],['Cardápios digitais','cardapios-digitais.html']]],
  ['Tecnologia','tecnologia.html','microchip',[['Assistente IA','assistente-ia.html'],['API e ERP','api-erp.html'],['Análise e relatórios','analise-relatorios.html'],['SEO','seo.html'],['Domínio e alojamento','dominio-alojamento.html'],['Comunicação digital','comunicacao-digital.html']]],
- ['Comunidade','comunidade.html','users',[['Cursos','cursos.html'],['Webinars','webinars.html'],['Notificações','notificacoes.html'],['Atualizações','atualizacoes.html'],['Central de ajuda','central-ajuda.html'],['Suporte técnico','suporte-tecnico.html']]],
+ ['Comunidade','comunidade.html','users',[['Cursos','cursos.html'],['Webinars','webinars.html'],['Notificações','notificacoes.html'],['Central de ajuda','central-ajuda.html'],['Suporte técnico','suporte-tecnico.html']]],
  ['Contactos','contactos.html','envelope'],
  ['Admin','admin.html','lock'],
  ['KanawaSoft ERP','index.html#erp','desktop']
