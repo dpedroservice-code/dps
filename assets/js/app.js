@@ -141,6 +141,7 @@
         <div>
           <div style="color:var(--primary);font-weight:600;font-size:.85rem;text-transform:uppercase;margin-bottom:.8rem;">${catName}</div>
           <h2 style="font-size:1.6rem;margin-bottom:.5rem;">${escapeHtml(p.name)}</h2>
+          <button class="btn btn-secondary" style="margin:.7rem 0" onclick="searchProductImage('${escapeHtml(p.externalId || p.id)}','${escapeHtml(p.name)}')"><i class="fas fa-images"></i> Procurar imagem do produto</button>
           ${p.brand ? `<div style="color:var(--text-muted);font-size:.9rem;margin-bottom:1rem;">Marca: <strong>${escapeHtml(p.brand)}</strong></div>` : ''}
           <div style="display:flex;align-items:baseline;gap:1rem;margin:1.2rem 0;">
             <span style="font-size:2rem;font-weight:800;color:var(--success);">${window.DPEDRO_DB.fmtKz(price)}</span>
@@ -197,6 +198,34 @@
     currentDetailProduct = null;
   }
 
+  async function searchProductImage(productId, productName) {
+    let panel=document.getElementById('dpImageFinder');
+    if(!panel){panel=document.createElement('div');panel.id='dpImageFinder';panel.className='dp-image-finder';document.body.appendChild(panel);}
+    panel.innerHTML='';
+    const head=document.createElement('div');head.className='dp-image-head';
+    const title=document.createElement('strong');title.textContent='Imagens para: '+productName;
+    const close=document.createElement('button');close.textContent='×';close.onclick=()=>panel.remove();
+    head.append(title,close);panel.append(head);
+    const info=document.createElement('p');info.textContent='A procurar no Wikimedia Commons. Confirme se a imagem corresponde à marca e ao modelo.';panel.append(info);
+    const resultsBox=document.createElement('div');resultsBox.className='dp-image-results';resultsBox.textContent='A pesquisar…';panel.append(resultsBox);
+    try {
+      const url='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(productName)+'&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=360&format=json&origin=*';
+      const response=await fetch(url);if(!response.ok)throw new Error('Serviço de imagens indisponível.');
+      const data=await response.json();const pages=Object.values(data.query?.pages||{});
+      const results=pages.map(page=>{const image=page.imageinfo?.[0]||{};const meta=image.extmetadata||{};return {title:page.title,url:image.thumburl||image.url,original:image.url,license:meta.LicenseShortName?.value||'Licença não identificada'};}).filter(item=>item.url&&item.original);
+      resultsBox.innerHTML='';if(!results.length){resultsBox.textContent='Sem resultados. Experimente marca + modelo.';return;}
+      results.forEach((item,index)=>{const card=document.createElement('article');card.className='dp-image-option';const image=document.createElement('img');image.src=item.url;image.alt=item.title;const caption=document.createElement('small');caption.textContent=item.license;const choose=document.createElement('button');choose.textContent='Usar imagem';choose.onclick=()=>chooseProductImage(productId,item);const original=document.createElement('a');original.href=item.original;original.target='_blank';original.rel='noopener';original.textContent='Ver original';card.append(image,caption,choose,original);resultsBox.append(card);});
+    } catch(error){resultsBox.textContent=error.message;}
+  }
+  function chooseProductImage(productId,item){
+    window.DPEDRO_DB.saveProductImage(productId,item.url);
+    if(currentDetailProduct){currentDetailProduct.image=item.url;const image=document.querySelector('#productDetail img');if(image)image.src=item.url;}
+    const panel=document.getElementById('dpImageFinder');if(!panel)return;
+    const note=document.createElement('p');note.className='dp-image-confirm';note.textContent='Imagem escolhida e guardada neste navegador. A sincronização para todos os visitantes exige armazenamento partilhado.';
+    const link=document.createElement('a');link.href=item.original;link.target='_blank';link.rel='noopener';link.download='';link.textContent='Descarregar imagem original';
+    const copy=document.createElement('button');copy.textContent='Copiar ligação';copy.onclick=()=>navigator.clipboard.writeText(item.original).then(()=>copy.textContent='Ligação copiada').catch(()=>copy.textContent='Use o menu do navegador para copiar');
+    panel.append(note,link,copy);
+  }
   // ============ INIT ============
   document.addEventListener('DOMContentLoaded', async () => {
     try { products = await window.DPEDRO_DB.loadProducts(); } catch (error) { products = []; const grid = document.getElementById('productsGrid'); if (grid) grid.innerHTML = '<div class="catalog-status"><h3>Catálogo temporariamente indisponível</h3><p>' + escapeHtml(error.message) + '</p><button class="btn btn-primary" onclick="location.reload()">Tentar novamente</button></div>'; }
@@ -240,4 +269,5 @@
   window.addDetailToCart = addDetailToCart;
   window.buyDetailNow = buyDetailNow;
   window.toggleTheme = toggleTheme;
+  window.searchProductImage = searchProductImage;
 })();
