@@ -69,7 +69,7 @@
     return `
       <div class="product-card">
         <div class="product-image" onclick="openDetail(${p.id})">
-          <img src="${p.image}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.src='assets/1.png'">
+          <img src="${p.image}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.style.display='none'">
           ${hasPromo ? '<span class="product-badge promo">PROMO</span>' : ''}
           ${!inStock ? '<span class="product-badge out">ESGOTADO</span>' : ''}
         </div>
