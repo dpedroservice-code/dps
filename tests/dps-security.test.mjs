@@ -45,6 +45,8 @@ test("storefront migration seeds only the verified D.PEDRO company and endpoint"
   assert.ok(migration.includes("d2bf8670-0667-4d44-96ab-8fb8280cf089"));
   assert.ok(migration.includes("mhaynctedpyqjxdhdisv.supabase.co/functions/v1/ecommerce-gateway?action=catalog"));
   assert.ok(migration.includes("on conflict (slug) do update"));
+  assert.ok(migration.includes("from public, anon, authenticated"));
+  assert.ok(migration.includes("to service_role"));
 });
 
 test("public checkout collects customer data and sends a stable idempotency reference", async () => {
